@@ -1,0 +1,12 @@
+[submodule "lib/cleverhand-interface"]
+	path = lib/cleverhand-interface
+	url = git@github.com:Aightech/cleverhand-interface
+	branch = main
+[submodule "lib/built_lsl"]
+	path = lib/built_lsl
+	url = git@github.com:Aightech/built_lsl
+	branch = main
+[submodule "lib/strANSIseq"]
+	path = lib/strANSIseq
+	url = git@github.com:Aightech/strANSIseq
+	branch = main
