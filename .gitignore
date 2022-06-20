@@ -28,3 +28,8 @@
 !/.dir-locals.el
 !/README.md
 !/.clang-format
+!/.github
+!/.github/*
+!/LICENSE
+!/CONTRIBUTING.md
+
