@@ -1,7 +1,7 @@
 # CleverHand configuraton GUI
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/Aightech/qt-clvhd-config)](https://github.com/Aightech/qt-clvhd-config/latest)
 [![GitHub](https://img.shields.io/github/license/Aightech/qt-clvhd-config)](https://github.com/Aightech/qt-clvhd-config/blob/main/LICENSE)
-![GitHub Repo stars](https://img.shields.io/github/stars/Aightech/qt-clvhd-config)
+
 
 
 Simple Graphical interface to configurate a CleverHand master and stream EMG samples. 
