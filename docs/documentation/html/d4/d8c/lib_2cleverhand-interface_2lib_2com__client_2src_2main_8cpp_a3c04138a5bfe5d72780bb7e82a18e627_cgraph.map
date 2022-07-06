@@ -1,0 +1,8 @@
+<map id="main" name="main">
+<area shape="rect" id="node1" title=" " alt="" coords="5,117,60,143"/>
+<area shape="rect" id="node2" href="$df/dcd/class_communication_1_1_client.html#a53a63c26f29f2941aa1ecde1946a5a1b" title=" " alt="" coords="108,51,279,92"/>
+<area shape="rect" id="node3" href="$df/dcd/class_communication_1_1_client.html#a69d9e6091a406da083655a2bec68a527" title="readS read the com inmterface." alt="" coords="327,5,497,47"/>
+<area shape="rect" id="node4" href="$df/dcd/class_communication_1_1_client.html#a83e96cb781794b40ba2ffdbb39f54c40" title="writeS write the com interface." alt="" coords="327,84,497,125"/>
+<area shape="rect" id="node5" href="$df/dcd/class_communication_1_1_client.html#a6c850f2dd5a0043581541c28a21988b2" title="open_connection Open the connection the serial or network or interface" alt="" coords="108,168,279,209"/>
+<area shape="rect" id="node6" href="$d6/d55/classlsl_1_1stream__outlet.html#a675bbe044a5053087e05e0267fe6722a" title=" " alt="" coords="125,257,261,299"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="ClvHd::Master::read_all_signal" name="ClvHd::Master::read_all_signal">
+<area shape="rect" id="node1" title="Read all data registers (State, 3fast, 3precise) from each available module." alt="" coords="728,23,879,65"/>
+<area shape="rect" id="node2" href="$d3/d82/lib_2cleverhand-interface_2src_2main_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title=" " alt="" coords="569,5,624,32"/>
+<area shape="rect" id="node3" href="$d9/dc6/class_main_window.html#ab015c2fb4f4636468144e4c683882594" title="push_lsl Push data to the LSL stream." alt="" coords="513,56,680,83"/>
+<area shape="rect" id="node4" href="$d9/dc6/class_main_window.html#a6781fa3a250e3ad46f9d491434333ffb" title="streaming_loop Loop that continuously reads data from the board and send it to the LSL stream." alt="" coords="251,56,465,83"/>
+<area shape="rect" id="node5" href="$d9/dc6/class_main_window.html#a996c5a2b6f77944776856f08ec30858d" title=" " alt="" coords="5,56,203,83"/>
+</map>

@@ -25,9 +25,25 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    /**
+     * @brief addBoard Add a new board to the list of boards.
+     * 
+     * @param id 
+     */
     void addBoard(int id);
 
+    /**
+     * @brief streaming_loop Loop that continuously reads data from the board and send it to the LSL stream.
+     * 
+     * @param obj The MainWindow object.
+     * @return void* 
+     */
     static void *streaming_loop(void *obj);
+
+    /**
+     * @brief push_lsl Push data to the LSL stream.
+     * 
+     */
     void push_lsl();
 
 private slots:

@@ -1,0 +1,30 @@
+<map id="Communication::Client::writeS" name="Communication::Client::writeS">
+<area shape="rect" id="node1" title="writeS write the com interface." alt="" coords="1203,192,1373,233"/>
+<area shape="rect" id="node2" href="$df/dcd/class_communication_1_1_client.html#a53a63c26f29f2941aa1ecde1946a5a1b" title=" " alt="" coords="979,57,1150,99"/>
+<area shape="rect" id="node3" href="$d4/d8c/lib_2cleverhand-interface_2lib_2com__client_2src_2main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title=" " alt="" coords="800,6,855,33"/>
+<area shape="rect" id="node6" href="$d5/d90/class_clv_hd_1_1_master.html#ad552d7fff3892121269ebee55817c16c" title="readReg read size byte starting from reg address from the module with the given id." alt="" coords="977,199,1153,226"/>
+<area shape="rect" id="node14" href="$d5/d90/class_clv_hd_1_1_master.html#aec0710c06519f1a2a5750c7c15759b0f" title="writeReg write one byte to reg address to the module with the given id." alt="" coords="975,617,1155,643"/>
+<area shape="rect" id="node28" href="$d5/d90/class_clv_hd_1_1_master.html#aa06bbdd15b68b0550bbdb71087b03730" title=" " alt="" coords="975,667,1154,694"/>
+<area shape="rect" id="node4" href="$d5/d90/class_clv_hd_1_1_master.html#a42345cdd26cd5596ae6b3c674a6a97ac" title="setup Get the number of EMG modules connected to the master board." alt="" coords="748,57,907,83"/>
+<area shape="rect" id="node5" href="$d3/d82/lib_2cleverhand-interface_2src_2main_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title=" " alt="" coords="569,86,624,113"/>
+<area shape="rect" id="node7" href="$dd/d80/class_clv_hd_1_1_e_m_g.html#a66e3835c0a8225792368835153e173d6" title=" " alt="" coords="744,107,911,134"/>
+<area shape="rect" id="node8" href="$d5/d90/class_clv_hd_1_1_master.html#af6c6b4b2d00f398973c382bdfce6f78f" title="Read all data registers (State, 3fast, 3precise) from each available module." alt="" coords="752,159,903,200"/>
+<area shape="rect" id="node12" href="$dd/d80/class_clv_hd_1_1_e_m_g.html#a755e5a83ea9422329354be92db9d2412" title=" " alt="" coords="743,224,911,265"/>
+<area shape="rect" id="node13" href="$dd/d80/class_clv_hd_1_1_e_m_g.html#a5fb8389610bbed3a4aa8a7147777b7dd" title=" " alt="" coords="732,289,923,331"/>
+<area shape="rect" id="node9" href="$d9/dc6/class_main_window.html#ab015c2fb4f4636468144e4c683882594" title="push_lsl Push data to the LSL stream." alt="" coords="513,166,680,193"/>
+<area shape="rect" id="node10" href="$d9/dc6/class_main_window.html#a6781fa3a250e3ad46f9d491434333ffb" title="streaming_loop Loop that continuously reads data from the board and send it to the LSL stream." alt="" coords="251,166,465,193"/>
+<area shape="rect" id="node11" href="$d9/dc6/class_main_window.html#a996c5a2b6f77944776856f08ec30858d" title=" " alt="" coords="5,166,203,193"/>
+<area shape="rect" id="node15" href="$dd/d80/class_clv_hd_1_1_e_m_g.html#ac270260e60f381da894e18e947eaf048" title=" " alt="" coords="754,355,901,396"/>
+<area shape="rect" id="node17" href="$dd/d80/class_clv_hd_1_1_e_m_g.html#acce16a5bc4a36a39f32f75c9cfd5b5cc" title=" " alt="" coords="754,420,901,461"/>
+<area shape="rect" id="node18" href="$dd/d80/class_clv_hd_1_1_e_m_g.html#ac1e43a9ba3881d0925ca71db0fc6195f" title=" " alt="" coords="742,486,913,513"/>
+<area shape="rect" id="node19" href="$dd/d80/class_clv_hd_1_1_e_m_g.html#a845b5e6252b356b00f15ad95dfdd3e90" title=" " alt="" coords="742,537,913,563"/>
+<area shape="rect" id="node20" href="$dd/d80/class_clv_hd_1_1_e_m_g.html#a0e2546b93544a240ff345ba9a3d4187f" title=" " alt="" coords="742,587,913,614"/>
+<area shape="rect" id="node21" href="$dd/d80/class_clv_hd_1_1_e_m_g.html#acd5f6dc7d899c972d50fd4b15a266be7" title=" " alt="" coords="754,639,901,680"/>
+<area shape="rect" id="node22" href="$dd/d80/class_clv_hd_1_1_e_m_g.html#a96306dd25ba55aec1d206d64e901fbb1" title=" " alt="" coords="752,704,903,745"/>
+<area shape="rect" id="node23" href="$dd/d80/class_clv_hd_1_1_e_m_g.html#a2451dfc524f943cf1cd50c0c93c466df" title=" " alt="" coords="737,770,918,797"/>
+<area shape="rect" id="node24" href="$dd/d80/class_clv_hd_1_1_e_m_g.html#a88344c3f87545fc0a6969798d846a122" title=" " alt="" coords="733,821,921,847"/>
+<area shape="rect" id="node25" href="$dd/d80/class_clv_hd_1_1_e_m_g.html#a93c77aaec1b3784de83770216ed2e87c" title=" " alt="" coords="728,871,927,898"/>
+<area shape="rect" id="node26" href="$dd/d80/class_clv_hd_1_1_e_m_g.html#a7a048493b7b3895dd6596fd06b3533e7" title=" " alt="" coords="742,922,913,949"/>
+<area shape="rect" id="node27" href="$dd/d80/class_clv_hd_1_1_e_m_g.html#a7c9523474af8089ab99de828eeeaae28" title=" " alt="" coords="753,973,901,999"/>
+<area shape="rect" id="node16" href="$dd/d80/class_clv_hd_1_1_e_m_g.html#a916369b10206c372f91d6ddde938d3a4" title="setup Write all setup parameters to the board." alt="" coords="525,587,668,614"/>
+</map>

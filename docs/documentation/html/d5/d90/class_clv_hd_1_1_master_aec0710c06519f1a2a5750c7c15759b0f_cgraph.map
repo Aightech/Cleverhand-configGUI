@@ -1,0 +1,4 @@
+<map id="ClvHd::Master::writeReg" name="ClvHd::Master::writeReg">
+<area shape="rect" id="node1" title="writeReg write one byte to reg address to the module with the given id." alt="" coords="5,13,185,39"/>
+<area shape="rect" id="node2" href="$df/dcd/class_communication_1_1_client.html#a83e96cb781794b40ba2ffdbb39f54c40" title="writeS write the com interface." alt="" coords="233,5,404,47"/>
+</map>

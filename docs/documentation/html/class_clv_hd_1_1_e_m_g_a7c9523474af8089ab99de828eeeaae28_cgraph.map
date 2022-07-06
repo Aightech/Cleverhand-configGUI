@@ -1,0 +1,5 @@
+<map id="ClvHd::EMG::~EMG" name="ClvHd::EMG::~EMG">
+<area shape="rect" id="node1" title=" " alt="" coords="5,13,153,39"/>
+<area shape="rect" id="node2" href="$class_clv_hd_1_1_master.html#aec0710c06519f1a2a5750c7c15759b0f" title="writeReg write one byte to reg address to the module with the given id." alt="" coords="201,13,381,39"/>
+<area shape="rect" id="node3" href="$class_communication_1_1_client.html#a83e96cb781794b40ba2ffdbb39f54c40" title="writeS write the com interface." alt="" coords="429,5,600,47"/>
+</map>

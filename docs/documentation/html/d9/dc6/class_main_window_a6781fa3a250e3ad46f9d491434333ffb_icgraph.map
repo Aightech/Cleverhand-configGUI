@@ -1,0 +1,4 @@
+<map id="MainWindow::streaming_loop" name="MainWindow::streaming_loop">
+<area shape="rect" id="node1" title="streaming_loop Loop that continuously reads data from the board and send it to the LSL stream." alt="" coords="251,5,465,32"/>
+<area shape="rect" id="node2" href="$d9/dc6/class_main_window.html#a996c5a2b6f77944776856f08ec30858d" title=" " alt="" coords="5,5,203,32"/>
+</map>

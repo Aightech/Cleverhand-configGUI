@@ -1,0 +1,7 @@
+<map id="ClvHd::EMG::read_precise_value" name="ClvHd::EMG::read_precise_value">
+<area shape="rect" id="node1" title=" " alt="" coords="5,23,196,65"/>
+<area shape="rect" id="node2" href="$dd/d80/class_clv_hd_1_1_e_m_g.html#abd1e5e166e080416c664b0166ba75440" title=" " alt="" coords="263,5,401,32"/>
+<area shape="rect" id="node3" href="$d5/d90/class_clv_hd_1_1_master.html#ad552d7fff3892121269ebee55817c16c" title="readReg read size byte starting from reg address from the module with the given id." alt="" coords="244,56,420,83"/>
+<area shape="rect" id="node4" href="$df/dcd/class_communication_1_1_client.html#a69d9e6091a406da083655a2bec68a527" title="readS read the com inmterface." alt="" coords="468,15,639,57"/>
+<area shape="rect" id="node5" href="$df/dcd/class_communication_1_1_client.html#a83e96cb781794b40ba2ffdbb39f54c40" title="writeS write the com interface." alt="" coords="468,81,639,122"/>
+</map>

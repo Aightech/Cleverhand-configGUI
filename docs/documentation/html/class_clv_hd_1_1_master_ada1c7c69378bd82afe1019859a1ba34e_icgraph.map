@@ -1,0 +1,6 @@
+<map id="ClvHd::Master::data_ready" name="ClvHd::Master::data_ready">
+<area shape="rect" id="node1" title="data_ready Check if the data is ready to be read from from the given channel of the module with the g..." alt="" coords="728,5,879,47"/>
+<area shape="rect" id="node2" href="$class_main_window.html#ab015c2fb4f4636468144e4c683882594" title="push_lsl Push data to the LSL stream." alt="" coords="513,13,680,39"/>
+<area shape="rect" id="node3" href="$class_main_window.html#a6781fa3a250e3ad46f9d491434333ffb" title="streaming_loop Loop that continuously reads data from the board and send it to the LSL stream." alt="" coords="251,13,465,39"/>
+<area shape="rect" id="node4" href="$class_main_window.html#a996c5a2b6f77944776856f08ec30858d" title=" " alt="" coords="5,13,203,39"/>
+</map>

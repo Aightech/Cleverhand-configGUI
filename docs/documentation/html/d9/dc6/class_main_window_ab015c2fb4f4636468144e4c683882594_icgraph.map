@@ -1,0 +1,5 @@
+<map id="MainWindow::push_lsl" name="MainWindow::push_lsl">
+<area shape="rect" id="node1" title="push_lsl Push data to the LSL stream." alt="" coords="513,5,680,32"/>
+<area shape="rect" id="node2" href="$d9/dc6/class_main_window.html#a6781fa3a250e3ad46f9d491434333ffb" title="streaming_loop Loop that continuously reads data from the board and send it to the LSL stream." alt="" coords="251,5,465,32"/>
+<area shape="rect" id="node3" href="$d9/dc6/class_main_window.html#a996c5a2b6f77944776856f08ec30858d" title=" " alt="" coords="5,5,203,32"/>
+</map>

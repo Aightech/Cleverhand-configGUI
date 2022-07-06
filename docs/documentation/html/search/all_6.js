@@ -1,0 +1,27 @@
+var searchData=
+[
+  ['f_582',['f',['../d3/dab/post__processing_8m.html#a633de4b0c14ca52ea2432a3c8a5c4c31',1,'post_processing.m']]],
+  ['fast_5femg_583',['fast_EMG',['../d5/d90/class_clv_hd_1_1_master.html#aeea1a25cfe82b72bc8ba2281d1237d08',1,'ClvHd::Master']]],
+  ['fast_5fvalue_584',['fast_value',['../dd/d80/class_clv_hd_1_1_e_m_g.html#a9c274152c1aff1186d06c8627a77bf4c',1,'ClvHd::EMG']]],
+  ['fg_5fblack_585',['FG_BLACK',['../d2/d52/namespace_e_s_c.html#a93c187b0ecaecc64127a1e7d211562a1a5dca7fe4d92c85528ebd0ef79c5667aa',1,'ESC']]],
+  ['fg_5fblue_586',['FG_BLUE',['../d2/d52/namespace_e_s_c.html#a93c187b0ecaecc64127a1e7d211562a1a2e257ceec6e536a962c70f40a34c9007',1,'ESC']]],
+  ['fg_5fcyan_587',['FG_CYAN',['../d2/d52/namespace_e_s_c.html#a93c187b0ecaecc64127a1e7d211562a1a3cffc01ddafe59f7aad4748ba09e00cb',1,'ESC']]],
+  ['fg_5fdefault_588',['FG_DEFAULT',['../d2/d52/namespace_e_s_c.html#a93c187b0ecaecc64127a1e7d211562a1aaca550ee9729992cd413afcfdd055307',1,'ESC']]],
+  ['fg_5fgreen_589',['FG_GREEN',['../d2/d52/namespace_e_s_c.html#a93c187b0ecaecc64127a1e7d211562a1a83d98faa761e10f33c380fd8543b0e45',1,'ESC']]],
+  ['fg_5fmagenta_590',['FG_MAGENTA',['../d2/d52/namespace_e_s_c.html#a93c187b0ecaecc64127a1e7d211562a1a15dd561a9faf2d716969140deab7ef6e',1,'ESC']]],
+  ['fg_5fred_591',['FG_RED',['../d2/d52/namespace_e_s_c.html#a93c187b0ecaecc64127a1e7d211562a1a57d7b88b2382fe1957cf7a1f3b73cce2',1,'ESC']]],
+  ['fg_5fwhite_592',['FG_WHITE',['../d2/d52/namespace_e_s_c.html#a93c187b0ecaecc64127a1e7d211562a1a8430eff406bf683b02e024cee344a213',1,'ESC']]],
+  ['fg_5fyellow_593',['FG_YELLOW',['../d2/d52/namespace_e_s_c.html#a93c187b0ecaecc64127a1e7d211562a1a653902e9c4f7c42a022db1b4bb2f48ac',1,'ESC']]],
+  ['figure_594',['figure',['../d3/dab/post__processing_8m.html#a391e34f2de441d79152a7b3d6e4c9c86',1,'post_processing.m']]],
+  ['first_5fchild_595',['first_child',['../d9/d90/classlsl_1_1xml__element.html#ab68b7a1c63c2cb0eb4ce6361b94469b7',1,'lsl::xml_element::first_child() const'],['../d9/d90/classlsl_1_1xml__element.html#ab68b7a1c63c2cb0eb4ce6361b94469b7',1,'lsl::xml_element::first_child() const'],['../d9/d90/classlsl_1_1xml__element.html#ab68b7a1c63c2cb0eb4ce6361b94469b7',1,'lsl::xml_element::first_child() const']]],
+  ['flex_5fch0_5fcn_5freg_596',['FLEX_CH0_CN_REG',['../d9/d27/namespace_clv_hd.html#a9b42ae641ea7f2aad2fd10300476c6c6a0e408e38b0ae4dcd0ec332baca5217c5',1,'ClvHd']]],
+  ['flex_5fch1_5fcn_5freg_597',['FLEX_CH1_CN_REG',['../d9/d27/namespace_clv_hd.html#a9b42ae641ea7f2aad2fd10300476c6c6a05410e31b161ef563594e07e95c75336',1,'ClvHd']]],
+  ['flex_5fch2_5fcn_5freg_598',['FLEX_CH2_CN_REG',['../d9/d27/namespace_clv_hd.html#a9b42ae641ea7f2aad2fd10300476c6c6a08505e724e7f1e2fe0c13bbf2fb37afc',1,'ClvHd']]],
+  ['flex_5fpace_5fcn_5freg_599',['FLEX_PACE_CN_REG',['../d9/d27/namespace_clv_hd.html#a9b42ae641ea7f2aad2fd10300476c6c6a7f7b68f78045dd58e4c769608108ee8a',1,'ClvHd']]],
+  ['flex_5fvbat_5fcn_5freg_600',['FLEX_VBAT_CN_REG',['../d9/d27/namespace_clv_hd.html#a9b42ae641ea7f2aad2fd10300476c6c6a6f6a76731b17d3e89c850001b0312bb5',1,'ClvHd']]],
+  ['forever_601',['FOREVER',['../d3/db0/namespacelsl.html#a74cfbc9077aca21295117217249721ed',1,'lsl']]],
+  ['format_602',['FORMAT',['../d2/d52/namespace_e_s_c.html#a93c187b0ecaecc64127a1e7d211562a1',1,'ESC::FORMAT()'],['../d2/d52/namespace_e_s_c.html#a93c187b0ecaecc64127a1e7d211562a1',1,'ESC::FORMAT()'],['../d2/d52/namespace_e_s_c.html#a93c187b0ecaecc64127a1e7d211562a1',1,'ESC::FORMAT()'],['../d2/d52/namespace_e_s_c.html#a93c187b0ecaecc64127a1e7d211562a1',1,'ESC::FORMAT()']]],
+  ['freq_603',['Freq',['../d3/dab/post__processing_8m.html#a10bdd6c2938a85955f2501aca23cdc3b',1,'post_processing.m']]],
+  ['from_5fxml_604',['from_xml',['../d1/d6a/classlsl_1_1stream__info.html#abf8fb6ba88d2f6c4069961149f18faec',1,'lsl::stream_info::from_xml(const std::string &amp;xml)'],['../d1/d6a/classlsl_1_1stream__info.html#abf8fb6ba88d2f6c4069961149f18faec',1,'lsl::stream_info::from_xml(const std::string &amp;xml)'],['../d1/d6a/classlsl_1_1stream__info.html#abf8fb6ba88d2f6c4069961149f18faec',1,'lsl::stream_info::from_xml(const std::string &amp;xml)']]],
+  ['fstr_605',['fstr',['../d2/d52/namespace_e_s_c.html#a080ff5f5b8a2ed3567a541acfa69a425',1,'ESC']]]
+];

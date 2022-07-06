@@ -1,5 +1,5 @@
 set(EXEC_NAME qt-clvhd-config)
-set(PROJECT_VERSION 1.4)
+set(PROJECT_VERSION 1.6)
 
 ###### Special libraries ######
 set(EXTRA_LIBS "")

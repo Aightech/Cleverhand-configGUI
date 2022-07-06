@@ -1,0 +1,13 @@
+<map id="MainWindow::streaming_loop" name="MainWindow::streaming_loop">
+<area shape="rect" id="node1" title="streaming_loop Loop that continuously reads data from the board and send it to the LSL stream." alt="" coords="5,159,220,186"/>
+<area shape="rect" id="node2" href="$class_main_window.html#ab015c2fb4f4636468144e4c683882594" title="push_lsl Push data to the LSL stream." alt="" coords="268,159,435,186"/>
+<area shape="rect" id="node3" href="$class_clv_hd_1_1_master.html#ada1c7c69378bd82afe1019859a1ba34e" title="data_ready Check if the data is ready to be read from from the given channel of the module with the g..." alt="" coords="511,5,661,47"/>
+<area shape="rect" id="node4" href="$class_clv_hd_1_1_master.html#aeea1a25cfe82b72bc8ba2281d1237d08" title="fast_EMG Read the previously requested fast data(2byte) from the given channel of the module with the..." alt="" coords="494,71,678,98"/>
+<area shape="rect" id="node5" href="$class_clv_hd_1_1_master.html#a20857873ff9bef3f0ee85fda32cf447a" title="get_error Get the active error from the module with the given id." alt="" coords="515,123,657,164"/>
+<area shape="rect" id="node6" href="$class_clv_hd_1_1_master.html#a9858a36df2b319fdf0c63bc4e93e79f6" title="precise_EMG Read the previously requested precise data(3byte) from the given channel of the module wi..." alt="" coords="483,189,689,215"/>
+<area shape="rect" id="node7" href="$classlsl_1_1stream__outlet.html#a675bbe044a5053087e05e0267fe6722a" title=" " alt="" coords="518,264,654,305"/>
+<area shape="rect" id="node8" href="$class_clv_hd_1_1_master.html#af6c6b4b2d00f398973c382bdfce6f78f" title="Read all data registers (State, 3fast, 3precise) from each available module." alt="" coords="511,329,661,371"/>
+<area shape="rect" id="node9" href="$class_clv_hd_1_1_master.html#ad552d7fff3892121269ebee55817c16c" title="readReg read size byte starting from reg address from the module with the given id." alt="" coords="737,337,913,363"/>
+<area shape="rect" id="node10" href="$class_communication_1_1_client.html#a69d9e6091a406da083655a2bec68a527" title="readS read the com inmterface." alt="" coords="961,296,1132,337"/>
+<area shape="rect" id="node11" href="$class_communication_1_1_client.html#a83e96cb781794b40ba2ffdbb39f54c40" title="writeS write the com interface." alt="" coords="961,361,1132,403"/>
+</map>

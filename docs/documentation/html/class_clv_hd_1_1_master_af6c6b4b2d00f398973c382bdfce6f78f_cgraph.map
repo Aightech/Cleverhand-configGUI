@@ -1,0 +1,6 @@
+<map id="ClvHd::Master::read_all_signal" name="ClvHd::Master::read_all_signal">
+<area shape="rect" id="node1" title="Read all data registers (State, 3fast, 3precise) from each available module." alt="" coords="5,39,156,80"/>
+<area shape="rect" id="node2" href="$class_clv_hd_1_1_master.html#ad552d7fff3892121269ebee55817c16c" title="readReg read size byte starting from reg address from the module with the given id." alt="" coords="204,46,380,73"/>
+<area shape="rect" id="node3" href="$class_communication_1_1_client.html#a69d9e6091a406da083655a2bec68a527" title="readS read the com inmterface." alt="" coords="428,5,599,47"/>
+<area shape="rect" id="node4" href="$class_communication_1_1_client.html#a83e96cb781794b40ba2ffdbb39f54c40" title="writeS write the com interface." alt="" coords="428,71,599,112"/>
+</map>

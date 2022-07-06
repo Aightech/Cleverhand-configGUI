@@ -1,0 +1,6 @@
+<map id="ClvHd::Master::setup" name="ClvHd::Master::setup">
+<area shape="rect" id="node1" title="setup Get the number of EMG modules connected to the master board." alt="" coords="5,42,164,69"/>
+<area shape="rect" id="node2" href="$class_communication_1_1_client.html#a53a63c26f29f2941aa1ecde1946a5a1b" title=" " alt="" coords="212,64,383,105"/>
+<area shape="rect" id="node3" href="$class_communication_1_1_client.html#a69d9e6091a406da083655a2bec68a527" title="readS read the com inmterface." alt="" coords="431,5,601,47"/>
+<area shape="rect" id="node4" href="$class_communication_1_1_client.html#a83e96cb781794b40ba2ffdbb39f54c40" title="writeS write the com interface." alt="" coords="431,71,601,112"/>
+</map>

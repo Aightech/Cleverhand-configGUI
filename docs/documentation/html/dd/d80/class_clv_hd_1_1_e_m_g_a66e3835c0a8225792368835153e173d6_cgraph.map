@@ -1,0 +1,6 @@
+<map id="ClvHd::EMG::get_error" name="ClvHd::EMG::get_error">
+<area shape="rect" id="node1" title=" " alt="" coords="5,46,172,73"/>
+<area shape="rect" id="node2" href="$d5/d90/class_clv_hd_1_1_master.html#ad552d7fff3892121269ebee55817c16c" title="readReg read size byte starting from reg address from the module with the given id." alt="" coords="220,46,396,73"/>
+<area shape="rect" id="node3" href="$df/dcd/class_communication_1_1_client.html#a69d9e6091a406da083655a2bec68a527" title="readS read the com inmterface." alt="" coords="444,5,615,47"/>
+<area shape="rect" id="node4" href="$df/dcd/class_communication_1_1_client.html#a83e96cb781794b40ba2ffdbb39f54c40" title="writeS write the com interface." alt="" coords="444,71,615,112"/>
+</map>
