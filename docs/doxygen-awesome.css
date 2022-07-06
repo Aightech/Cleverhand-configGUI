@@ -386,7 +386,7 @@ a.anchor {
 }
 
 #projectlogo img {
-    max-height: calc(var(--title-font-size) * 2);
+    max-height: calc(var(--title-font-size) * 5);
     margin-right: var(--spacing-small);
 }
 

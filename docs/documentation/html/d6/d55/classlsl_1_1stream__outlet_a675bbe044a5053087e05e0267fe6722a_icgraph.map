@@ -1,3 +1,8 @@
 <map id="lsl::stream_outlet::push_sample" name="lsl::stream_outlet::push_sample">
-<area shape="rect" id="node1" title=" " alt="" coords="5,29,141,71"/>
+<area shape="rect" id="node1" title=" " alt="" coords="728,57,864,98"/>
+<area shape="rect" id="node2" href="$d4/d8c/lib_2cleverhand-interface_2lib_2com__client_2src_2main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title=" " alt="" coords="569,5,624,32"/>
+<area shape="rect" id="node3" href="$d6/d55/classlsl_1_1stream__outlet.html#a58427b98e8a60e7d160534078f3e04f8" title=" " alt="" coords="529,57,665,98"/>
+<area shape="rect" id="node4" href="$d9/dc6/class_main_window.html#ab015c2fb4f4636468144e4c683882594" title="push_lsl Push data to the LSL stream." alt="" coords="513,123,680,149"/>
+<area shape="rect" id="node5" href="$d9/dc6/class_main_window.html#a6781fa3a250e3ad46f9d491434333ffb" title="streaming_loop Loop that continuously reads data from the board and send it to the LSL stream." alt="" coords="251,123,465,149"/>
+<area shape="rect" id="node6" href="$d9/dc6/class_main_window.html#a996c5a2b6f77944776856f08ec30858d" title=" " alt="" coords="5,123,203,149"/>
 </map>

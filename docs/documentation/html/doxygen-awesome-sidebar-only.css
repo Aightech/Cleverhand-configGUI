@@ -31,10 +31,10 @@ html {
     /* side nav width. MUST be = `TREEVIEW_WIDTH`.
      * Make sure it is wide enough to contain the page title (logo + title + version)
      */
-    --side-nav-fixed-width: 335px;
+    --side-nav-fixed-width: 435px;
     --menu-display: none;
 
-    --top-height: 120px;
+    --top-height: 170px;
 }
 
 #projectname {
