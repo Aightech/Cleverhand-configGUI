@@ -90,8 +90,9 @@ else ()
       set(CMAKE_AUTOUIC ON)
       set(CMAKE_AUTOMOC ON)
       set(CMAKE_AUTORCC ON)
-      find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
-      find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+      find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core GUI Widgets PrintSupport)
+      find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets PrintSupport)
+      find_package(Qt6 COMPONENTS PrintSupport REQUIRED)
       set(QT_QPA_PLATFORM "wayland")
     if (Qt${QT_VERSION_MAJOR}_FOUND)
       list(APPEND EXTRA_LIBS Qt6::Widgets )
@@ -199,7 +200,8 @@ else ()
   add_executable(${EXEC_NAME} ${MAIN_FILE} ${LIB_HEADERS} ${APP_FORM})
   target_link_libraries (${EXEC_NAME}
     PUBLIC ${LIB_NAME}
-    PUBLIC ${TOOL_LIBS})
+    PUBLIC ${TOOL_LIBS}
+    PRIVATE Qt6::PrintSupport)
   target_include_directories(${EXEC_NAME}
     PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
 

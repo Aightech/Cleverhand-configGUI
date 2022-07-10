@@ -1,22 +1,45 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
+/**
+ * @file      mainwindow.h
+ * @brief     Header of
+ * @date      Thu Jul  7 09:48:51 2022
+ * @author    aightech
+ * @copyright BSD-3-Clause
+ * 
+ * This module
+ */
 
 #include "qboxlayout.h"
 #include <QMainWindow>
 #include <clvHdMaster.hpp>
 #include <QTreeWidgetItem>
 #include <QSettings>
+#include "qcustomplot.h"
 
 
 
+#include <numeric>
+#include <chrono>
+#include <iostream>
+#include <iomanip> // std::setprecision
 #include <pthread.h>
 #include <lsl_cpp.h>
 #include <utility>
+ #include <QTimer>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
+
+using clk = std::chrono::system_clock;
+using sec = std::chrono::duration<double>;
+
+/**
+ * @brief The MainWindow class
+ * 
+ */
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -55,6 +78,7 @@ private slots:
     void debug();
     void write_reg();
     void read_reg();
+    void data_ploting();
 
 private:
     Ui::MainWindow *ui;
@@ -69,6 +93,8 @@ private:
     pthread_t m_thread;
     lsl::stream_outlet *m_lsl_outlet;
     std::vector<float> m_lsl_sample;
+    std::vector<float> m_mean_sample;
+    int m_t=0;
 
     QHBoxLayout* m_debug_bar;
     bool m_debug_mode=false;
@@ -77,7 +103,15 @@ private:
 
     QSettings* m_settings;
 
+  std::chrono::time_point<std::chrono::system_clock> m_time;
+  std::chrono::time_point<std::chrono::system_clock> m_start_time;
+  sec m_duration;
 
+  std::vector<QCustomPlot*> m_plots;
+  std::vector<std::vector<float>*> m_values;
+
+  // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
+  QTimer m_plotTimer;
 
 
 };
