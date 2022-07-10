@@ -2,6 +2,8 @@
 !.gitignore
 !/bin
 !/bin/*
+!/forms
+!/forms/*
 !/src
 !/src/*
 !/include
