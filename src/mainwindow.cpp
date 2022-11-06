@@ -127,7 +127,7 @@ MainWindow::connection()
 {
     ui->pushButton_connect->setDisabled(true);
     ui->lineEdit_pathdev->setDisabled(true);
-    m_master.open_connection(Communication::Client::TCP,"192.168.127.253",5000);
+    m_master.open_connection(Communication::Client::SERIAL,ui->lineEdit_pathdev->text().toStdString().c_str());//"192.168.127.253",5000);
                // ui->lineEdit_pathdev->text().toStdString().c_str());
 
     m_nb_board = m_master.setup();
@@ -153,6 +153,7 @@ MainWindow::connection()
         ui->spinBox_bytes->setDisabled(false);
         ui->spinBox_board_id->setMinimum(1);
         m_nb_ch = m_nb_board * (3 + 3);
+	
         std::cout << "[INFOS] " << m_nb_ch << " active channels" << std::endl;
         lsl::stream_info info_sample(
                     ui->lineEdit_lsl_name->text().toStdString(),

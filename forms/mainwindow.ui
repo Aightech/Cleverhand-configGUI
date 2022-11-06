@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>652</width>
+    <width>662</width>
     <height>628</height>
    </rect>
   </property>
@@ -47,6 +47,26 @@
            <widget class="QLineEdit" name="lineEdit_pathdev">
             <property name="text">
              <string>/dev/ttyACM0</string>
+            </property>
+            <property name="placeholderText">
+             <string>ex: /dev/ttyACM0 or 192.168.127.253</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_15">
+            <property name="text">
+             <string>Port:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEdit">
+            <property name="text">
+             <string>5000</string>
+            </property>
+            <property name="placeholderText">
+             <string>ex: 5000</string>
             </property>
            </widget>
           </item>
@@ -950,7 +970,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>652</width>
+     <width>662</width>
      <height>22</height>
     </rect>
    </property>
