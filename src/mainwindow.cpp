@@ -3,7 +3,7 @@
 #include <QComboBox>
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow)
+    : QMainWindow(parent), ui(new Ui::MainWindow), m_master(1)
 {
     m_settings = new QSettings(".clvHd", "conf");
     ui->setupUi(this);
@@ -111,7 +111,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
     connect(&m_plotTimer, SIGNAL(timeout()), this, SLOT(data_ploting()));
-    m_plotTimer.start(30); // Interval 0 means to refresh as fast as possible
+
+
 
 }
 
@@ -341,6 +342,45 @@ MainWindow::upload()
                     ->currentIndex());
     }
     ui->pushButton_startStream->setDisabled(false);
+
+    if(m_plot != nullptr)
+    {
+        ui->verticalLayout_graph->removeWidget(m_plot);
+        delete m_plot;
+    }
+
+    m_plot = new QCustomPlot();
+    int code[6][3]={{1,2,0},
+                    {2,1,0},
+                    {0,1,2},
+                    {0,2,1},
+                    {2,0,1},
+                    {1,0,2}};
+    for(int i = 0; i<3*m_boardItem.size();i++)
+    {
+        m_plot->addGraph();
+        double val[3]={0.25, 0.5, 0.25*(2- abs((int)(2*i/m_boardItem.size())%2-1))};
+        m_plot->graph(i)->setPen(QPen(QColor(255*val[code[i*2/m_boardItem.size()][0]], 255*val[code[i*2/m_boardItem.size()][1]], 255*val[code[i*2/m_boardItem.size()][2]])));
+    }
+    QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
+    timeTicker->setTimeFormat("%s");
+    m_plot->xAxis->setTicker(timeTicker);
+    m_plot->axisRect()->setupFullAxesBox();
+
+    //m_plot->xAxis->setTickLabels(false);
+    m_plot->yAxis->setTickLabels(false);
+    //m_plot->xAxis->grid()->setVisible(false);
+    //m_plot->yAxis->grid()->setVisible(false);
+    //m_plot->xAxis->setTicks(false);
+    //m_plot->yAxis->setTicks(false);
+
+    m_plot->xAxis->setRange(0, 10);
+    m_plot->yAxis->setRange(0, 1000);
+
+    m_values.push_back(new std::vector<float>(1000));
+    m_plot->replot();
+    ui->verticalLayout_graph->addWidget(m_plot);
+    m_plot->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 }
 
 void
@@ -410,6 +450,8 @@ MainWindow::start_streaming()
 
         ui->pushButton_startStream->setDisabled(true);
         ui->pushButton_stopStream->setDisabled(false);
+        m_plotTimer.start(30); // Interval 0 means to refresh as fast as possible
+
     }
     catch(std::exception &e)
     {
@@ -425,6 +467,7 @@ MainWindow::stop_streaming()
     ui->pushButton_startStream->setDisabled(false);
     ui->pushButton_stopStream->setDisabled(true);
     ui->spinBox_bytes->setDisabled(false);
+    m_plotTimer.stop();
 }
 
 void *
@@ -440,47 +483,46 @@ MainWindow::push_lsl()
 {
     try
     {
+        //usleep(1000);
         if(m_is_streaming)
         {
-
-
             int n;
-            // if(((sec)(m_time-m_start_time)).count() >0.0001)
-            // {
-            //     m_t++;
-            //     n = m_master.read_all_signal();
-            //     m_duration = clk::now() - m_time;
-
-            // }
             m_time = clk::now();
             n = m_master.read_all_signal();
-            m_duration = clk::now() - m_time;
-            std::cout <<  "t  " << m_duration.count() << " " << m_t++ << std::endl;
-            m_time = clk::now();
-//            for(int i = 0; i < 3; i++)
-//            {
-//                m_master.get_error(i);
-//                //std::cout <<  ui->horizontalSlider_var->value()<< std::endl;
-//                //if(m_master.data_ready(i, -1))
-//                //std::cout << m_master.get_error(i, true) << std::endl;	//       m_boardItem[i]->setText(1, QString::fromStdString(m_master.get_error(i)));
-//                //else
-//                //  m_boardItem[i]->setText(1, " ");
+            std::cout <<  "v " << n << std::endl;
+            //m_duration = clk::now() - m_time;
+//            std::cout <<  "t  " << m_duration.count() << " " << m_t++ << std::endl;
+            //m_time = clk::now();
+            for(int i = 0; i < m_boardItem.size(); i++)
+            {
+                //m_master.get_error(i);
 
-//                for(int j = 0; j < 3; j++)
-//                {
+                //std::cout <<  ui->horizontalSlider_var->value()<< std::endl;
+                //if(m_master.data_ready(i, -1))
+                //std::cout << m_master.get_error(i, true) << std::endl;	//       m_boardItem[i]->setText(1, QString::fromStdString(m_master.get_error(i)));
+                //else
+                //  m_boardItem[i]->setText(1, " ");
 
-//                    if(m_master.data_ready(i, j, m_nb_bytes - 2) )
-//                        m_lsl_sample[3 * i + j] =
-//                                (m_nb_bytes == 2) ? m_master.fast_EMG(i, j)
-//                                                  : m_master.precise_EMG(i, j);
+                for(int j = 0; j < 3; j++)
+                {
+
+                    if(m_master.data_ready(i, j, m_nb_bytes - 2) )
+                        m_lsl_sample[3 * i + j] =
+                                (m_nb_bytes == 2) ? m_master.fast_EMG(i, j)
+                                                  : m_master.precise_EMG(i, j);
 //                    float a=0.0005;
 //                    m_mean_sample[3 * i + j] = (1-a)*m_mean_sample[3 * i + j] + a*m_lsl_sample[3 * i + j];
 //                    float val = (abs(m_lsl_sample[3 * i + j]-m_mean_sample[3 * i + j])>2)?m_mean_sample[3 * i + j]:m_lsl_sample[3 * i + j];
-//                    m_plots[3 * i + j]->graph()->addData(((sec)(m_time-m_start_time)).count(), val);
-//                }
+                    m_plot->graph(i*3+j)->addData(m_t,1000/m_boardItem.size()/3*(i*3+j+ (0.5 + m_lsl_sample[3 * i + j]/2500)));
 
-//            }
-            //m_lsl_outlet->push_sample(m_lsl_sample);
+                }
+
+            }
+
+            m_t = ((sec)(m_time-m_start_time)).count();
+            std::cout <<  "t  " << ((sec)(m_time-m_start_time)).count() << " v: " << m_lsl_sample[0]<< " v: " << m_lsl_sample[1]<< std::endl;
+            m_lsl_outlet->push_sample(m_lsl_sample);
+
         }
     }
     catch(std::exception &e)
@@ -492,6 +534,7 @@ MainWindow::push_lsl()
         std::cerr << "[ERROR] Got an exception: " << str << std::endl;
     }
 }
+
 
 void
 MainWindow::addBoard(int id)
@@ -651,29 +694,16 @@ MainWindow::addBoard(int id)
                                           "_pos_in")
                                   .value<int>());
 
-        QCustomPlot* p = new QCustomPlot();
-        p->addGraph();
-        p->xAxis->setTickLabels(false);
-        p->yAxis->setTickLabels(false);
-        p->xAxis->grid()->setVisible(false);
-        p->yAxis->grid()->setVisible(false);
-        p->xAxis->setTicks(false);
-        p->yAxis->setTicks(false);
 
-        p->xAxis->setRange(0, 10);
-        p->yAxis->setRange(-500, 500);
-
-        m_values.push_back(new std::vector<float>(1000));
-        p->replot();
-        ui->verticalLayout_graph->addWidget(p);
-        p->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
-        m_plots.push_back(p);
 
     }
 }
 
 void MainWindow::data_ploting()
 {
+    m_plot->replot();
+    if(m_t>10)
+        m_plot->xAxis->setRange(m_t-10, m_t);
 //    double key = QTime::currentTime().msec(); // time elapsed since start of demo, in seconds
 //    static double lastPointKey = 0;
 //    for(int i =0 ; i<m_plots.size();i++)

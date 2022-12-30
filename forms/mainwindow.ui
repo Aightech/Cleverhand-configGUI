@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>662</width>
+    <width>697</width>
     <height>628</height>
    </rect>
   </property>
@@ -958,10 +958,10 @@
         </item>
        </layout>
       </item>
-      <item>
-       <layout class="QVBoxLayout" name="verticalLayout_graph"/>
-      </item>
      </layout>
+    </item>
+    <item row="0" column="1">
+     <layout class="QVBoxLayout" name="verticalLayout_graph"/>
     </item>
    </layout>
   </widget>
@@ -970,7 +970,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>662</width>
+     <width>697</width>
      <height>22</height>
     </rect>
    </property>

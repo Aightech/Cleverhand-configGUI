@@ -69,6 +69,7 @@ public:
      */
     void push_lsl();
 
+
 private slots:
     void connection();
     void update_indiv_param();
@@ -94,7 +95,7 @@ private:
     lsl::stream_outlet *m_lsl_outlet;
     std::vector<float> m_lsl_sample;
     std::vector<float> m_mean_sample;
-    int m_t=0;
+    double m_t=0;
 
     QHBoxLayout* m_debug_bar;
     bool m_debug_mode=false;
@@ -107,7 +108,7 @@ private:
   std::chrono::time_point<std::chrono::system_clock> m_start_time;
   sec m_duration;
 
-  std::vector<QCustomPlot*> m_plots;
+  QCustomPlot* m_plot;
   std::vector<std::vector<float>*> m_values;
 
   // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
