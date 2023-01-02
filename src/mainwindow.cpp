@@ -105,12 +105,12 @@ MainWindow::MainWindow(QWidget *parent)
     ui->lineEdit_value_reg->setVisible(false);
     ui->pushButton_write->setVisible(false);
 
-    m_start_time = clk::now();
-    m_time = clk::now();
+    //m_time = clk::now();
     pthread_create(&m_thread, 0, &MainWindow::streaming_loop, this);
 
     // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
     connect(&m_plotTimer, SIGNAL(timeout()), this, SLOT(data_ploting()));
+
 
 
 
@@ -167,6 +167,8 @@ MainWindow::connection()
         ui->lineEdit_lsl_type->setDisabled(true);
     }
     ui->spinBox_board_id->setMaximum(m_nb_board);
+
+    this->update_indiv_param();
 }
 
 void
@@ -379,8 +381,12 @@ MainWindow::upload()
 
     m_values.push_back(new std::vector<float>(1000));
     m_plot->replot();
-    ui->verticalLayout_graph->addWidget(m_plot);
+
+
     m_plot->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+    ui->verticalLayout_graph->addWidget(m_plot);
+
+    this->resize(1500, m_plot->height());
 }
 
 void
@@ -445,12 +451,18 @@ MainWindow::start_streaming()
         ui->spinBox_bytes->setDisabled(true);
         m_nb_bytes = ui->spinBox_bytes->value();
         m_master.start_acquisition();
+        m_start_time = clk::now();
+        m_time = clk::now();
+        m_plot->xAxis->setRange(0, 10);
+
+        for(int i = 0 ; i < m_plot->graphCount();i++)
+            m_plot->graph(i)->data()->clear();
 
         m_is_streaming = true;
 
         ui->pushButton_startStream->setDisabled(true);
         ui->pushButton_stopStream->setDisabled(false);
-        m_plotTimer.start(30); // Interval 0 means to refresh as fast as possible
+        m_plotTimer.start(100);
 
     }
     catch(std::exception &e)
@@ -462,8 +474,9 @@ MainWindow::start_streaming()
 void
 MainWindow::stop_streaming()
 {
-    m_master.stop_acquisition();
     m_is_streaming = false;
+    usleep(100000);
+    m_master.stop_acquisition();
     ui->pushButton_startStream->setDisabled(false);
     ui->pushButton_stopStream->setDisabled(true);
     ui->spinBox_bytes->setDisabled(false);
@@ -488,11 +501,14 @@ MainWindow::push_lsl()
         {
             int n;
             m_time = clk::now();
+            m_t = ((sec)(m_time-m_start_time)).count();
             n = m_master.read_all_signal();
-            std::cout <<  "v " << n << std::endl;
+            //std::cout <<  "v " << n << std::endl;
             //m_duration = clk::now() - m_time;
 //            std::cout <<  "t  " << m_duration.count() << " " << m_t++ << std::endl;
             //m_time = clk::now();
+            //std::cout <<  "t  " << m_t << " [ ";
+
             for(int i = 0; i < m_boardItem.size(); i++)
             {
                 //m_master.get_error(i);
@@ -514,13 +530,13 @@ MainWindow::push_lsl()
 //                    m_mean_sample[3 * i + j] = (1-a)*m_mean_sample[3 * i + j] + a*m_lsl_sample[3 * i + j];
 //                    float val = (abs(m_lsl_sample[3 * i + j]-m_mean_sample[3 * i + j])>2)?m_mean_sample[3 * i + j]:m_lsl_sample[3 * i + j];
                     m_plot->graph(i*3+j)->addData(m_t,1000/m_boardItem.size()/3*(i*3+j+ (0.5 + m_lsl_sample[3 * i + j]/2500)));
-
+                    //std::cout << m_lsl_sample[3 * i + j] << " , ";
                 }
 
             }
+            //std::cout << "\b\b]" << std::endl;
 
-            m_t = ((sec)(m_time-m_start_time)).count();
-            std::cout <<  "t  " << ((sec)(m_time-m_start_time)).count() << " v: " << m_lsl_sample[0]<< " v: " << m_lsl_sample[1]<< std::endl;
+
             m_lsl_outlet->push_sample(m_lsl_sample);
 
         }
