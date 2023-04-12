@@ -205,7 +205,7 @@ else ()
   target_include_directories(${EXEC_NAME}
     PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
-qt_finalize_executable(qt-clvhd-config)
+qt_finalize_executable(${EXEC_NAME})
 
 
 

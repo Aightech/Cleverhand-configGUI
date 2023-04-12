@@ -13,25 +13,25 @@ MainWindow::MainWindow(QWidget *parent)
     ui->treeWidget_main->setColumnWidth(0, 150);
 
     ui->comboBox_freq->addItems(QStringList() << "102400 Hz"
-                                << "204800 Hz");
+                                              << "204800 Hz");
     ui->comboBox_freq->setCurrentIndex(1);
     ui->comboBox_res->addItems(QStringList() << "Low"
-                               << "High");
+                                             << "High");
     ui->comboBox_res->setCurrentIndex(1);
     ui->comboBox_R1->addItems(QStringList() << "2"
-                              << "4");
+                                            << "4");
     ui->comboBox_R2->addItems(QStringList() << "4"
-                              << "5"
-                              << "6"
-                              << "8");
+                                            << "5"
+                                            << "6"
+                                            << "8");
     ui->comboBox_R3->addItems(QStringList() << "4"
-                              << "6"
-                              << "8"
-                              << "12"
-                              << "16"
-                              << "32"
-                              << "64"
-                              << "128");
+                                            << "6"
+                                            << "8"
+                                            << "12"
+                                            << "16"
+                                            << "32"
+                                            << "64"
+                                            << "128");
 
     connect(ui->pushButton_connect, SIGNAL(released()), this,
             SLOT(connection()));
@@ -72,6 +72,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->actionRead_write_reg, SIGNAL(triggered(bool)), this,
             SLOT(debug()));
+    connect(ui->actionfilters, SIGNAL(triggered(bool)), this, SLOT(filters()));
 
     connect(ui->pushButton_read, SIGNAL(released()), this, SLOT(read_reg()));
     connect(ui->pushButton_write, SIGNAL(released()), this, SLOT(write_reg()));
@@ -105,15 +106,30 @@ MainWindow::MainWindow(QWidget *parent)
     ui->lineEdit_value_reg->setVisible(false);
     ui->pushButton_write->setVisible(false);
 
+    ui->line_mode->setVisible(false);
+
+    ui->verticalSlider_zoomPlot->setVisible(false);
+
+    //hide all children of horizontalLayout_filters
+    for(int i = 0; i < ui->horizontalLayout_filters->count(); ++i)
+    {
+        ui->horizontalLayout_filters->itemAt(i)->widget()->hide();
+    }
+
     //m_time = clk::now();
     pthread_create(&m_thread, 0, &MainWindow::streaming_loop, this);
 
     // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
     connect(&m_plotTimer, SIGNAL(timeout()), this, SLOT(data_ploting()));
 
+    int samplingRate = 1300; // Hz
+    m_filters.resize(5);
 
-
-
+    m_filter_checkboxes.push_back(ui->checkBox_DC);
+    m_filter_checkboxes.push_back(ui->checkBox_notch);
+    m_filter_checkboxes.push_back(ui->checkBox_bandpass);
+    m_filter_checkboxes.push_back(ui->checkBox_rectify);
+    m_filter_checkboxes.push_back(ui->checkBox_envelope);
 }
 
 MainWindow::~MainWindow()
@@ -128,8 +144,11 @@ MainWindow::connection()
 {
     ui->pushButton_connect->setDisabled(true);
     ui->lineEdit_pathdev->setDisabled(true);
-    m_master.open_connection(Communication::Client::SERIAL,ui->lineEdit_pathdev->text().toStdString().c_str());//"192.168.127.253",5000);
-               // ui->lineEdit_pathdev->text().toStdString().c_str());
+    m_master.open_connection(Communication::Client::SERIAL,
+                             ui->lineEdit_pathdev->text()
+                                 .toStdString()
+                                 .c_str()); //"192.168.127.253",5000);
+    // ui->lineEdit_pathdev->text().toStdString().c_str());
 
     m_nb_board = m_master.setup();
     for(int i = 0; i < m_nb_board; i++) { this->addBoard(i + 1); }
@@ -154,12 +173,12 @@ MainWindow::connection()
         ui->spinBox_bytes->setDisabled(false);
         ui->spinBox_board_id->setMinimum(1);
         m_nb_ch = m_nb_board * (3 + 3);
-	
+
         std::cout << "[INFOS] " << m_nb_ch << " active channels" << std::endl;
         lsl::stream_info info_sample(
-                    ui->lineEdit_lsl_name->text().toStdString(),
-                    ui->lineEdit_lsl_type->text().toStdString(), m_nb_ch, 0,
-                    lsl::cf_float32);
+            ui->lineEdit_lsl_name->text().toStdString(),
+            ui->lineEdit_lsl_type->text().toStdString(), m_nb_ch, 0,
+            lsl::cf_float32);
         m_lsl_outlet = new lsl::stream_outlet(info_sample);
         m_lsl_sample.resize(m_nb_ch);
         m_mean_sample.resize(m_nb_ch);
@@ -169,6 +188,31 @@ MainWindow::connection()
     ui->spinBox_board_id->setMaximum(m_nb_board);
 
     this->update_indiv_param();
+}
+
+void
+MainWindow::filters()
+{
+    if(m_filter_mode == false)
+    {
+        for(int i = 0; i < ui->horizontalLayout_filters->count(); ++i)
+        {
+            ui->horizontalLayout_filters->itemAt(i)->widget()->show();
+        }
+        m_filter_mode = true;
+        ui->line_mode->setVisible(true);
+        std::cout << "[INFOS] Filter mode activated" << std::endl;
+    }
+    else
+    {
+        for(int i = 0; i < ui->horizontalLayout_filters->count(); ++i)
+        {
+            ui->horizontalLayout_filters->itemAt(i)->widget()->hide();
+        }
+        m_filter_mode = false;
+        if(m_debug_mode == false)
+            ui->line_mode->setVisible(false);
+    }
 }
 
 void
@@ -186,6 +230,7 @@ MainWindow::debug()
         ui->lineEdit_value_reg->setVisible(true);
         ui->pushButton_write->setVisible(true);
         m_debug_mode = true;
+        ui->line_mode->setVisible(true);
     }
     else
     {
@@ -199,6 +244,8 @@ MainWindow::debug()
         ui->lineEdit_value_reg->setVisible(false);
         ui->pushButton_write->setVisible(false);
         m_debug_mode = false;
+        if(m_filter_mode == false)
+            ui->line_mode->setVisible(false);
     }
 }
 
@@ -227,29 +274,29 @@ MainWindow::upload()
     {
         int route_table[3][2] = {
             {qobject_cast<QComboBox *>(
-             ui->treeWidget_main->itemWidget(
-             m_boardItem[i]->child(7)->child(0)->child(0), 1))
-             ->currentIndex(),
+                 ui->treeWidget_main->itemWidget(
+                     m_boardItem[i]->child(7)->child(0)->child(0), 1))
+                 ->currentIndex(),
              qobject_cast<QComboBox *>(
-             ui->treeWidget_main->itemWidget(
-             m_boardItem[i]->child(7)->child(0)->child(1), 1))
-             ->currentIndex()},
+                 ui->treeWidget_main->itemWidget(
+                     m_boardItem[i]->child(7)->child(0)->child(1), 1))
+                 ->currentIndex()},
             {qobject_cast<QComboBox *>(
-             ui->treeWidget_main->itemWidget(
-             m_boardItem[i]->child(7)->child(1)->child(0), 1))
-             ->currentIndex(),
+                 ui->treeWidget_main->itemWidget(
+                     m_boardItem[i]->child(7)->child(1)->child(0), 1))
+                 ->currentIndex(),
              qobject_cast<QComboBox *>(
-             ui->treeWidget_main->itemWidget(
-             m_boardItem[i]->child(7)->child(1)->child(1), 1))
-             ->currentIndex()},
+                 ui->treeWidget_main->itemWidget(
+                     m_boardItem[i]->child(7)->child(1)->child(1), 1))
+                 ->currentIndex()},
             {qobject_cast<QComboBox *>(
-             ui->treeWidget_main->itemWidget(
-             m_boardItem[i]->child(7)->child(2)->child(0), 1))
-             ->currentIndex(),
+                 ui->treeWidget_main->itemWidget(
+                     m_boardItem[i]->child(7)->child(2)->child(0), 1))
+                 ->currentIndex(),
              qobject_cast<QComboBox *>(
-             ui->treeWidget_main->itemWidget(
-             m_boardItem[i]->child(7)->child(2)->child(1), 1))
-             ->currentIndex()},
+                 ui->treeWidget_main->itemWidget(
+                     m_boardItem[i]->child(7)->child(2)->child(1), 1))
+                 ->currentIndex()},
         };
         //enable ch1 and disaable ch2 and ch3 (0x36)
         bool chx_enable[3] = {
@@ -259,89 +306,89 @@ MainWindow::upload()
         //no high resolution & Clock frequency for Channel 1 :204800 (0x08)
         bool chx_high_res[3] = {
             (bool)qobject_cast<QComboBox *>(
-            ui->treeWidget_main->itemWidget(m_boardItem[i]->child(2), 1))
-            ->currentIndex(),
+                ui->treeWidget_main->itemWidget(m_boardItem[i]->child(2), 1))
+                ->currentIndex(),
             (bool)qobject_cast<QComboBox *>(
-            ui->treeWidget_main->itemWidget(m_boardItem[i]->child(2), 1))
-            ->currentIndex(),
+                ui->treeWidget_main->itemWidget(m_boardItem[i]->child(2), 1))
+                ->currentIndex(),
             (bool)qobject_cast<QComboBox *>(
-            ui->treeWidget_main->itemWidget(m_boardItem[i]->child(2), 1))
-            ->currentIndex()};
+                ui->treeWidget_main->itemWidget(m_boardItem[i]->child(2), 1))
+                ->currentIndex()};
         bool chx_high_freq[3] = {
             (bool)qobject_cast<QComboBox *>(
-            ui->treeWidget_main->itemWidget(m_boardItem[i]->child(1), 1))
-            ->currentIndex(),
+                ui->treeWidget_main->itemWidget(m_boardItem[i]->child(1), 1))
+                ->currentIndex(),
             (bool)qobject_cast<QComboBox *>(
-            ui->treeWidget_main->itemWidget(m_boardItem[i]->child(1), 1))
-            ->currentIndex(),
+                ui->treeWidget_main->itemWidget(m_boardItem[i]->child(1), 1))
+                ->currentIndex(),
             (bool)qobject_cast<QComboBox *>(
-            ui->treeWidget_main->itemWidget(m_boardItem[i]->child(1), 1))
-            ->currentIndex()};
+                ui->treeWidget_main->itemWidget(m_boardItem[i]->child(1), 1))
+                ->currentIndex()};
         int R1[3] = {qobject_cast<QComboBox *>(ui->treeWidget_main->itemWidget(
-                     m_boardItem[i]->child(3), 1))
-                     ->currentText()
-                     .toInt(),
+                                                   m_boardItem[i]->child(3), 1))
+                         ->currentText()
+                         .toInt(),
                      qobject_cast<QComboBox *>(ui->treeWidget_main->itemWidget(
-                     m_boardItem[i]->child(3), 1))
-                     ->currentText()
-                     .toInt(),
+                                                   m_boardItem[i]->child(3), 1))
+                         ->currentText()
+                         .toInt(),
                      qobject_cast<QComboBox *>(ui->treeWidget_main->itemWidget(
-                     m_boardItem[i]->child(3), 1))
-                     ->currentText()
-                     .toInt()}; //R1 ch1:2 ch2:4 ch3:4 (0x1)
+                                                   m_boardItem[i]->child(3), 1))
+                         ->currentText()
+                         .toInt()}; //R1 ch1:2 ch2:4 ch3:4 (0x1)
         int R2 = qobject_cast<QComboBox *>(ui->treeWidget_main->itemWidget(
                                                m_boardItem[i]->child(4), 1))
-                ->currentText()
-                .toInt(); //R2 = 4 (0x01)
+                     ->currentText()
+                     .toInt(); //R2 = 4 (0x01)
         int R3[3] = {qobject_cast<QComboBox *>(ui->treeWidget_main->itemWidget(
-                     m_boardItem[i]->child(5), 1))
-                     ->currentText()
-                     .toInt(),
+                                                   m_boardItem[i]->child(5), 1))
+                         ->currentText()
+                         .toInt(),
                      qobject_cast<QComboBox *>(ui->treeWidget_main->itemWidget(
-                     m_boardItem[i]->child(5), 1))
-                     ->currentText()
-                     .toInt(),
+                                                   m_boardItem[i]->child(5), 1))
+                         ->currentText()
+                         .toInt(),
                      qobject_cast<QComboBox *>(ui->treeWidget_main->itemWidget(
-                     m_boardItem[i]->child(5), 1))
-                     ->currentText()
-                     .toInt()}; //R3_ch1 = 4 (0x01)
+                                                   m_boardItem[i]->child(5), 1))
+                         ->currentText()
+                         .toInt()}; //R3_ch1 = 4 (0x01)
         m_master.setupEMG(i, route_table, chx_enable, chx_high_res,
                           chx_high_freq, R1, R2, R3);
         for(int j = 0; j < 3; j++)
         {
             m_settings->setValue("Board" + QString::number(i) + "/ADC" +
-                                 QString::number(j) + "_neg_in",
+                                     QString::number(j) + "_neg_in",
                                  route_table[j][0]);
             m_settings->setValue("Board" + QString::number(i) + "/ADC" +
-                                 QString::number(j) + "_pos_in",
+                                     QString::number(j) + "_pos_in",
                                  route_table[j][1]);
             m_settings->setValue("Board" + QString::number(i) + "/ADC" +
-                                 QString::number(j) + "_enable",
+                                     QString::number(j) + "_enable",
                                  chx_enable[j]);
             m_settings->setValue("Board" + QString::number(i) + "/ADC" +
-                                 QString::number(j) + "_high_res",
+                                     QString::number(j) + "_high_res",
                                  (int)chx_high_res[j]);
             m_settings->setValue("Board" + QString::number(i) + "/ADC" +
-                                 QString::number(j) + "_high_freq",
+                                     QString::number(j) + "_high_freq",
                                  (int)chx_high_freq[j]);
             m_settings->setValue(
-                        "Board" + QString::number(i) + "/ADC" + QString::number(j) +
-                        "_R1",
-                        qobject_cast<QComboBox *>(ui->treeWidget_main->itemWidget(
-                                                      m_boardItem[i]->child(3), 1))
-                        ->currentIndex());
+                "Board" + QString::number(i) + "/ADC" + QString::number(j) +
+                    "_R1",
+                qobject_cast<QComboBox *>(ui->treeWidget_main->itemWidget(
+                                              m_boardItem[i]->child(3), 1))
+                    ->currentIndex());
             m_settings->setValue(
-                        "Board" + QString::number(i) + "/ADC" + QString::number(j) +
-                        "_R3",
-                        qobject_cast<QComboBox *>(ui->treeWidget_main->itemWidget(
-                                                      m_boardItem[i]->child(5), 1))
-                        ->currentIndex());
+                "Board" + QString::number(i) + "/ADC" + QString::number(j) +
+                    "_R3",
+                qobject_cast<QComboBox *>(ui->treeWidget_main->itemWidget(
+                                              m_boardItem[i]->child(5), 1))
+                    ->currentIndex());
         }
         m_settings->setValue(
-                    "Board" + QString::number(i) + "/R2",
-                    qobject_cast<QComboBox *>(
-                        ui->treeWidget_main->itemWidget(m_boardItem[i]->child(4), 1))
-                    ->currentIndex());
+            "Board" + QString::number(i) + "/R2",
+            qobject_cast<QComboBox *>(
+                ui->treeWidget_main->itemWidget(m_boardItem[i]->child(4), 1))
+                ->currentIndex());
     }
     ui->pushButton_startStream->setDisabled(false);
 
@@ -352,17 +399,24 @@ MainWindow::upload()
     }
 
     m_plot = new QCustomPlot();
-    int code[6][3]={{1,2,0},
-                    {2,1,0},
-                    {0,1,2},
-                    {0,2,1},
-                    {2,0,1},
-                    {1,0,2}};
-    for(int i = 0; i<3*m_boardItem.size();i++)
+    int code[6][3] = {{1, 2, 0}, {2, 1, 0}, {0, 1, 2},
+                      {0, 2, 1}, {2, 0, 1}, {1, 0, 2}};
+    for(int i = 0; i < 3 * m_boardItem.size(); i++)
     {
         m_plot->addGraph();
-        double val[3]={0.25, 0.5, 0.25*(2- abs((int)(2*i/m_boardItem.size())%2-1))};
-        m_plot->graph(i)->setPen(QPen(QColor(255*val[code[i*2/m_boardItem.size()][0]], 255*val[code[i*2/m_boardItem.size()][1]], 255*val[code[i*2/m_boardItem.size()][2]])));
+        double val[3] = {
+            0.25, 0.5,
+            0.25 * (2 - abs((int)(2 * i / m_boardItem.size()) % 2 - 1))};
+        m_plot->graph(i)->setPen(
+            QPen(QColor(255 * val[code[i * 2 / m_boardItem.size()][0]],
+                        255 * val[code[i * 2 / m_boardItem.size()][1]],
+                        255 * val[code[i * 2 / m_boardItem.size()][2]])));
+        double samplingRate = 1300;
+        m_filters[0].push_back(new Highpass(5, samplingRate,8));
+        m_filters[1].push_back(new Bandstop(48, 52, samplingRate,40));
+        m_filters[2].push_back(new Bandpass(10, 200, samplingRate,20));
+        m_filters[3].push_back(new Rectifier(true));
+        m_filters[4].push_back(new Lowpass(20, samplingRate,20));
     }
     QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
     timeTicker->setTimeFormat("%s");
@@ -379,14 +433,18 @@ MainWindow::upload()
     m_plot->xAxis->setRange(0, 10);
     m_plot->yAxis->setRange(0, 1000);
 
-    m_values.push_back(new std::vector<float>(1000));
+    //resize the vector of queue raw data
+    // m_raw_data.resize(3*m_boardItem.size());
+    // m_filtered_data.resize(3*m_boardItem.size());
+    // for(int i = 0; i<3*m_boardItem.size();i++)
+    //     m_filtered_data[i].resize(m_data_queue_size);
     m_plot->replot();
 
-
-    m_plot->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+    m_plot->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     ui->verticalLayout_graph->addWidget(m_plot);
 
     this->resize(1500, m_plot->height());
+    ui->verticalSlider_zoomPlot->setVisible(true);
 }
 
 void
@@ -395,20 +453,20 @@ MainWindow::update_indiv_param()
     for(auto i : m_boardItem)
     {
         qobject_cast<QComboBox *>(
-                    ui->treeWidget_main->itemWidget(i->child(1), 1))
-                ->setCurrentIndex(ui->comboBox_freq->currentIndex());
+            ui->treeWidget_main->itemWidget(i->child(1), 1))
+            ->setCurrentIndex(ui->comboBox_freq->currentIndex());
         qobject_cast<QComboBox *>(
-                    ui->treeWidget_main->itemWidget(i->child(2), 1))
-                ->setCurrentIndex(ui->comboBox_res->currentIndex());
+            ui->treeWidget_main->itemWidget(i->child(2), 1))
+            ->setCurrentIndex(ui->comboBox_res->currentIndex());
         qobject_cast<QComboBox *>(
-                    ui->treeWidget_main->itemWidget(i->child(3), 1))
-                ->setCurrentIndex(ui->comboBox_R1->currentIndex());
+            ui->treeWidget_main->itemWidget(i->child(3), 1))
+            ->setCurrentIndex(ui->comboBox_R1->currentIndex());
         qobject_cast<QComboBox *>(
-                    ui->treeWidget_main->itemWidget(i->child(4), 1))
-                ->setCurrentIndex(ui->comboBox_R2->currentIndex());
+            ui->treeWidget_main->itemWidget(i->child(4), 1))
+            ->setCurrentIndex(ui->comboBox_R2->currentIndex());
         qobject_cast<QComboBox *>(
-                    ui->treeWidget_main->itemWidget(i->child(5), 1))
-                ->setCurrentIndex(ui->comboBox_R3->currentIndex());
+            ui->treeWidget_main->itemWidget(i->child(5), 1))
+            ->setCurrentIndex(ui->comboBox_R3->currentIndex());
 
         i->child(6)->setText(1, ui->label_bandwidth->text());
 
@@ -420,25 +478,25 @@ MainWindow::update_indiv_param()
                                              ui->checkBox_adc3->checkState());
 
         qobject_cast<QComboBox *>(
-                    ui->treeWidget_main->itemWidget(i->child(7)->child(0)->child(0), 1))
-                ->setCurrentIndex(ui->comboBox_n1->currentIndex());
+            ui->treeWidget_main->itemWidget(i->child(7)->child(0)->child(0), 1))
+            ->setCurrentIndex(ui->comboBox_n1->currentIndex());
         qobject_cast<QComboBox *>(
-                    ui->treeWidget_main->itemWidget(i->child(7)->child(0)->child(1), 1))
-                ->setCurrentIndex(ui->comboBox_p1->currentIndex());
+            ui->treeWidget_main->itemWidget(i->child(7)->child(0)->child(1), 1))
+            ->setCurrentIndex(ui->comboBox_p1->currentIndex());
 
         qobject_cast<QComboBox *>(
-                    ui->treeWidget_main->itemWidget(i->child(7)->child(1)->child(0), 1))
-                ->setCurrentIndex(ui->comboBox_n2->currentIndex());
+            ui->treeWidget_main->itemWidget(i->child(7)->child(1)->child(0), 1))
+            ->setCurrentIndex(ui->comboBox_n2->currentIndex());
         qobject_cast<QComboBox *>(
-                    ui->treeWidget_main->itemWidget(i->child(7)->child(1)->child(1), 1))
-                ->setCurrentIndex(ui->comboBox_p2->currentIndex());
+            ui->treeWidget_main->itemWidget(i->child(7)->child(1)->child(1), 1))
+            ->setCurrentIndex(ui->comboBox_p2->currentIndex());
 
         qobject_cast<QComboBox *>(
-                    ui->treeWidget_main->itemWidget(i->child(7)->child(2)->child(0), 1))
-                ->setCurrentIndex(ui->comboBox_n3->currentIndex());
+            ui->treeWidget_main->itemWidget(i->child(7)->child(2)->child(0), 1))
+            ->setCurrentIndex(ui->comboBox_n3->currentIndex());
         qobject_cast<QComboBox *>(
-                    ui->treeWidget_main->itemWidget(i->child(7)->child(2)->child(1), 1))
-                ->setCurrentIndex(ui->comboBox_p3->currentIndex());
+            ui->treeWidget_main->itemWidget(i->child(7)->child(2)->child(1), 1))
+            ->setCurrentIndex(ui->comboBox_p3->currentIndex());
     }
 }
 
@@ -455,7 +513,7 @@ MainWindow::start_streaming()
         m_time = clk::now();
         m_plot->xAxis->setRange(0, 10);
 
-        for(int i = 0 ; i < m_plot->graphCount();i++)
+        for(int i = 0; i < m_plot->graphCount(); i++)
             m_plot->graph(i)->data()->clear();
 
         m_is_streaming = true;
@@ -463,7 +521,6 @@ MainWindow::start_streaming()
         ui->pushButton_startStream->setDisabled(true);
         ui->pushButton_stopStream->setDisabled(false);
         m_plotTimer.start(100);
-
     }
     catch(std::exception &e)
     {
@@ -500,14 +557,15 @@ MainWindow::push_lsl()
         if(m_is_streaming)
         {
             int n;
+
+            //compute the sampling rate
+            auto prev_time = m_time;
             m_time = clk::now();
-            m_t = ((sec)(m_time-m_start_time)).count();
+            double fs = 1.0 / ((sec)(m_time - prev_time)).count();
+            //printf("sampling rate: %f                \xd", fs);
+
+            m_t = ((sec)(m_time - m_start_time)).count();
             n = m_master.read_all_signal();
-            //std::cout <<  "v " << n << std::endl;
-            //m_duration = clk::now() - m_time;
-//            std::cout <<  "t  " << m_duration.count() << " " << m_t++ << std::endl;
-            //m_time = clk::now();
-            //std::cout <<  "t  " << m_t << " [ ";
 
             for(int i = 0; i < m_boardItem.size(); i++)
             {
@@ -518,27 +576,40 @@ MainWindow::push_lsl()
                 //std::cout << m_master.get_error(i, true) << std::endl;	//       m_boardItem[i]->setText(1, QString::fromStdString(m_master.get_error(i)));
                 //else
                 //  m_boardItem[i]->setText(1, " ");
+                //printf("data ready %d\n", i);
 
                 for(int j = 0; j < 3; j++)
                 {
 
-                    if(m_master.data_ready(i, j, m_nb_bytes - 2) )
-                        m_lsl_sample[3 * i + j] =
-                                (m_nb_bytes == 2) ? m_master.fast_EMG(i, j)
-                                                  : m_master.precise_EMG(i, j);
-//                    float a=0.0005;
-//                    m_mean_sample[3 * i + j] = (1-a)*m_mean_sample[3 * i + j] + a*m_lsl_sample[3 * i + j];
-//                    float val = (abs(m_lsl_sample[3 * i + j]-m_mean_sample[3 * i + j])>2)?m_mean_sample[3 * i + j]:m_lsl_sample[3 * i + j];
-                    m_plot->graph(i*3+j)->addData(m_t,1000/m_boardItem.size()/3*(i*3+j+ (0.5 + m_lsl_sample[3 * i + j]/2500)));
-                    //std::cout << m_lsl_sample[3 * i + j] << " , ";
+                    if(m_master.data_ready(i, j, m_nb_bytes - 2))
+                    {
+                        double v = (m_nb_bytes == 2)
+                                       ? m_master.fast_EMG(i, j)
+                                       : m_master.precise_EMG(i, j);
+                        double v_filtered = 4*(sin(2 * M_PI * 50*m_t)+sin(2 * M_PI * 10*m_t)+sin(2 * M_PI * 100*m_t)) +4;
+                        if(m_filter_mode)
+                        {
+                            for(int k = 0; k < m_filter_checkboxes.size(); k++)
+                            {
+                                if(m_filter_checkboxes[k]->isChecked())
+                                {
+                                    v_filtered = m_filters[k][3 * i + j]->apply(v_filtered, m_t);//TODO use timestamp
+                                }
+                            }
+                        }
+                        m_lsl_sample[3 * i + j] = v;
+                        m_plot->graph(i * 3 + j)->addData(
+                            m_t,
+                            1000 / m_boardItem.size() / 3 *
+                                (i * 3 + j +
+                                 (0.5 + ui->verticalSlider_zoomPlot->value() *
+                                            v_filtered / 500)));
+                    }
                 }
-
             }
             //std::cout << "\b\b]" << std::endl;
 
-
             m_lsl_outlet->push_sample(m_lsl_sample);
-
         }
     }
     catch(std::exception &e)
@@ -550,7 +621,6 @@ MainWindow::push_lsl()
         std::cerr << "[ERROR] Got an exception: " << str << std::endl;
     }
 }
-
 
 void
 MainWindow::addBoard(int id)
@@ -575,28 +645,28 @@ MainWindow::addBoard(int id)
 
     std::vector<std::pair<QString, QStringList>> sItemsNames;
     sItemsNames.push_back(std::make_pair("Mode", QStringList() << "Shut down"
-                                         << "Standby"
-                                         << "Start"));
+                                                               << "Standby"
+                                                               << "Start"));
     sItemsNames.push_back(std::make_pair("Frequency", QStringList()
-                                         << "102400 Hz"
-                                         << "204800 Hz"));
+                                                          << "102400 Hz"
+                                                          << "204800 Hz"));
     sItemsNames.push_back(std::make_pair("Resolution", QStringList()
-                                         << "Low"
-                                         << "High"));
+                                                           << "Low"
+                                                           << "High"));
     sItemsNames.push_back(std::make_pair("R1", QStringList() << "2"
-                                         << "4"));
+                                                             << "4"));
     sItemsNames.push_back(std::make_pair("R2", QStringList() << "4"
-                                         << "5"
-                                         << "6"
-                                         << "8"));
+                                                             << "5"
+                                                             << "6"
+                                                             << "8"));
     sItemsNames.push_back(std::make_pair("R3", QStringList() << "4"
-                                         << "6"
-                                         << "8"
-                                         << "12"
-                                         << "16"
-                                         << "32"
-                                         << "64"
-                                         << "128"));
+                                                             << "6"
+                                                             << "8"
+                                                             << "12"
+                                                             << "16"
+                                                             << "32"
+                                                             << "64"
+                                                             << "128"));
 
     std::vector<QTreeWidgetItem *> widgetItems;
     for(int i = 0; i < sItemsNames.size(); i++)
@@ -618,7 +688,7 @@ MainWindow::addBoard(int id)
     for(int i = 0; i < 3; i++)
     {
         adcs.push_back(
-                    new QTreeWidgetItem(widgetItems[widgetItems.size() - 1]));
+            new QTreeWidgetItem(widgetItems[widgetItems.size() - 1]));
         adcs[i]->setText(0, "ADC" + QString::number(i + 1));
         adcs[i]->setCheckState(1, Qt::Checked);
 
@@ -629,42 +699,42 @@ MainWindow::addBoard(int id)
             adcpad->setText(0, names[j]);
             QComboBox *comboBox = new QComboBox(this);
             comboBox->addItems(QStringList() << "NC"
-                               << "1"
-                               << "2"
-                               << "3"
-                               << "4"
-                               << "5"
-                               << "Common ref.");
+                                             << "1"
+                                             << "2"
+                                             << "3"
+                                             << "4"
+                                             << "5"
+                                             << "Common ref.");
             ui->treeWidget_main->setItemWidget(adcpad, 1, comboBox);
         }
     }
     qobject_cast<QComboBox *>(
-                ui->treeWidget_main->itemWidget(item->child(1), 1))
-            ->setCurrentIndex(m_settings
+        ui->treeWidget_main->itemWidget(item->child(1), 1))
+        ->setCurrentIndex(m_settings
                               ->value("Board" + QString::number(id - 1) +
                                       "/ADC" + QString::number(0) +
                                       "_high_freq")
                               .value<int>());
     qobject_cast<QComboBox *>(
-                ui->treeWidget_main->itemWidget(item->child(2), 1))
-            ->setCurrentIndex(m_settings
+        ui->treeWidget_main->itemWidget(item->child(2), 1))
+        ->setCurrentIndex(m_settings
                               ->value("Board" + QString::number(id - 1) +
                                       "/ADC" + QString::number(0) + "_high_res")
                               .value<int>());
     qobject_cast<QComboBox *>(
-                ui->treeWidget_main->itemWidget(item->child(3), 1))
-            ->setCurrentIndex(m_settings
+        ui->treeWidget_main->itemWidget(item->child(3), 1))
+        ->setCurrentIndex(m_settings
                               ->value("Board" + QString::number(id - 1) +
                                       "/ADC" + QString::number(0) + "_R1")
                               .value<int>());
     qobject_cast<QComboBox *>(
-                ui->treeWidget_main->itemWidget(item->child(4), 1))
-            ->setCurrentIndex(
-                m_settings->value("Board" + QString::number(id - 1) + "/R2")
+        ui->treeWidget_main->itemWidget(item->child(4), 1))
+        ->setCurrentIndex(
+            m_settings->value("Board" + QString::number(id - 1) + "/R2")
                 .value<int>());
     qobject_cast<QComboBox *>(
-                ui->treeWidget_main->itemWidget(item->child(5), 1))
-            ->setCurrentIndex(m_settings
+        ui->treeWidget_main->itemWidget(item->child(5), 1))
+        ->setCurrentIndex(m_settings
                               ->value("Board" + QString::number(id - 1) +
                                       "/ADC" + QString::number(0) + "_R3")
                               .value<int>());
@@ -672,63 +742,62 @@ MainWindow::addBoard(int id)
     //    item->child(6)->setText(1,ui->label_bandwidth->text());
 
     item->child(7)->child(0)->setCheckState(
-                1, (Qt::CheckState)(
-                    (int)(m_settings
-                          ->value("Board" + QString::number(id - 1) + "/ADC" +
-                                  QString::number(0) + "_enable")
-                          .value<bool>()) *
-                    2));
+        1, (Qt::CheckState)(
+               (int)(m_settings
+                         ->value("Board" + QString::number(id - 1) + "/ADC" +
+                                 QString::number(0) + "_enable")
+                         .value<bool>()) *
+               2));
     item->child(7)->child(1)->setCheckState(
-                1, (Qt::CheckState)(
-                    (int)(m_settings
-                          ->value("Board" + QString::number(id - 1) + "/ADC" +
-                                  QString::number(1) + "_enable")
-                          .value<bool>()) *
-                    2));
+        1, (Qt::CheckState)(
+               (int)(m_settings
+                         ->value("Board" + QString::number(id - 1) + "/ADC" +
+                                 QString::number(1) + "_enable")
+                         .value<bool>()) *
+               2));
     item->child(7)->child(2)->setCheckState(
-                1, (Qt::CheckState)(
-                    (int)(m_settings
-                          ->value("Board" + QString::number(id - 1) + "/ADC" +
-                                  QString::number(2) + "_enable")
-                          .value<bool>()) *
-                    2));
+        1, (Qt::CheckState)(
+               (int)(m_settings
+                         ->value("Board" + QString::number(id - 1) + "/ADC" +
+                                 QString::number(2) + "_enable")
+                         .value<bool>()) *
+               2));
 
     for(int j = 0; j < 3; j++)
     {
         qobject_cast<QComboBox *>(ui->treeWidget_main->itemWidget(
                                       item->child(7)->child(j)->child(0), 1))
-                ->setCurrentIndex(m_settings
+            ->setCurrentIndex(m_settings
                                   ->value("Board" + QString::number(id - 1) +
                                           "/ADC" + QString::number(j) +
                                           "_neg_in")
                                   .value<int>());
         qobject_cast<QComboBox *>(ui->treeWidget_main->itemWidget(
                                       item->child(7)->child(j)->child(1), 1))
-                ->setCurrentIndex(m_settings
+            ->setCurrentIndex(m_settings
                                   ->value("Board" + QString::number(id - 1) +
                                           "/ADC" + QString::number(j) +
                                           "_pos_in")
                                   .value<int>());
-
-
-
     }
 }
 
-void MainWindow::data_ploting()
+void
+MainWindow::data_ploting()
 {
+    //filter the data in m_plot->graph(0)
     m_plot->replot();
-    if(m_t>10)
-        m_plot->xAxis->setRange(m_t-10, m_t);
-//    double key = QTime::currentTime().msec(); // time elapsed since start of demo, in seconds
-//    static double lastPointKey = 0;
-//    for(int i =0 ; i<m_plots.size();i++)
-//    {
-//        m_plots[i]->replot();
-//        m_plots[i]->xAxis->setRange(((sec)(m_time-m_start_time)).count() , 1, Qt::AlignRight);
-//        m_plots[i]->yAxis->setRange(m_mean_sample[i]-2, m_mean_sample[i]+2);
-//    }
-//((sec)(m_time-m_start_time)).count()
+    if(m_t > 5)
+        m_plot->xAxis->setRange(m_t - 5, m_t);
+    //    double key = QTime::currentTime().msec(); // time elapsed since start of demo, in seconds
+    //    static double lastPointKey = 0;
+    //    for(int i =0 ; i<m_plots.size();i++)
+    //    {
+    //        m_plots[i]->replot();
+    //        m_plots[i]->xAxis->setRange(((sec)(m_time-m_start_time)).count() , 1, Qt::AlignRight);
+    //        m_plots[i]->yAxis->setRange(m_mean_sample[i]-2, m_mean_sample[i]+2);
+    //    }
+    //((sec)(m_time-m_start_time)).count()
     //    m_plots[0]->graph();
     //ui->customPlot->replot();
 

@@ -10,3 +10,7 @@
 	path = lib/strANSIseq
 	url = git@github.com:Aightech/strANSIseq
 	branch = main
+[submodule "lib/fltlib"]
+	path = lib/fltlib
+	url = git@github.com:Aightech/fltlib
+	branch = main

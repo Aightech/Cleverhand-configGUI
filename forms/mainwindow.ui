@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>697</width>
-    <height>628</height>
+    <height>648</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -605,10 +605,10 @@
                   <item>
                    <widget class="QComboBox" name="comboBox_n3">
                     <property name="currentText">
-                     <string>5</string>
+                     <string>4</string>
                     </property>
                     <property name="currentIndex">
-                     <number>5</number>
+                     <number>4</number>
                     </property>
                     <item>
                      <property name="text">
@@ -802,7 +802,7 @@
           <item>
            <widget class="QLineEdit" name="lineEdit_lsl_name">
             <property name="text">
-             <string>CleverHand-stream</string>
+             <string>CleverHandStream</string>
             </property>
            </widget>
           </item>
@@ -880,7 +880,7 @@
          </layout>
         </item>
         <item>
-         <widget class="Line" name="line_10">
+         <widget class="Line" name="line_mode">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -962,12 +962,114 @@
           </item>
          </layout>
         </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_filters">
+          <item>
+           <widget class="QCheckBox" name="checkBox_DC">
+            <property name="text">
+             <string>DC</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBox_notch">
+            <property name="text">
+             <string>Notch (50Hz)</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="Line" name="line_11">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBox_bandpass">
+            <property name="text">
+             <string>Bandpass:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_17">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>low</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="spinBox_bandpass_low"/>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_16">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>High</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="spinBox_bandpass_high"/>
+          </item>
+          <item>
+           <widget class="Line" name="line_12">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBox_rectify">
+            <property name="text">
+             <string>Rectify</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="Line" name="line_13">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBox_envelope">
+            <property name="text">
+             <string>Envelope</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
        </layout>
       </item>
      </layout>
     </item>
-    <item row="0" column="1">
+    <item row="0" column="2">
      <layout class="QVBoxLayout" name="verticalLayout_graph"/>
+    </item>
+    <item row="0" column="1">
+     <widget class="QSlider" name="verticalSlider_zoomPlot">
+      <property name="minimum">
+       <number>1</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -984,6 +1086,7 @@
     <property name="title">
      <string>Tools</string>
     </property>
+    <addaction name="actionfilters"/>
     <addaction name="actionRead_write_reg"/>
    </widget>
    <addaction name="menutest"/>
@@ -992,6 +1095,11 @@
   <action name="actionRead_write_reg">
    <property name="text">
     <string>debug</string>
+   </property>
+  </action>
+  <action name="actionfilters">
+   <property name="text">
+    <string>filters</string>
    </property>
   </action>
  </widget>
