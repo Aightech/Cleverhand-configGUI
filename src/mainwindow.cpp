@@ -70,6 +70,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->comboBox_p3, SIGNAL(currentIndexChanged(int)), this,
             SLOT(update_indiv_param()));
 
+    //update filters parameters
+    connect(ui->spinBox_bandpass_low, SIGNAL(valueChanged(int)), this,
+            SLOT(update_filter_param()));
+    connect(ui->spinBox_bandpass_high, SIGNAL(valueChanged(int)), this,
+            SLOT(update_filter_param()));
+
     connect(ui->actionRead_write_reg, SIGNAL(triggered(bool)), this,
             SLOT(debug()));
     connect(ui->actionfilters, SIGNAL(triggered(bool)), this, SLOT(filters()));
@@ -130,6 +136,8 @@ MainWindow::MainWindow(QWidget *parent)
     m_filter_checkboxes.push_back(ui->checkBox_bandpass);
     m_filter_checkboxes.push_back(ui->checkBox_rectify);
     m_filter_checkboxes.push_back(ui->checkBox_envelope);
+
+    filters();
 }
 
 MainWindow::~MainWindow()
@@ -181,7 +189,6 @@ MainWindow::connection()
             lsl::cf_float32);
         m_lsl_outlet = new lsl::stream_outlet(info_sample);
         m_lsl_sample.resize(m_nb_ch);
-        m_mean_sample.resize(m_nb_ch);
         ui->lineEdit_lsl_name->setDisabled(true);
         ui->lineEdit_lsl_type->setDisabled(true);
     }
@@ -213,6 +220,18 @@ MainWindow::filters()
         if(m_debug_mode == false)
             ui->line_mode->setVisible(false);
     }
+}
+
+void
+MainWindow::update_filter_param()
+{
+    double low = ui->spinBox_bandpass_low->value();
+    double high = ui->spinBox_bandpass_high->value();
+    low = (low < 0) ? 1 : low;
+    high = (high < low) ? low + 1 : high;
+    for(int i = 0; i < m_filters[2].size(); i++)
+        m_filters[2][i]->set_coefficients(
+            Bandpass::butterworth_coefficients(20, low, high, m_sampling_rate));
 }
 
 void
@@ -412,11 +431,13 @@ MainWindow::upload()
                         255 * val[code[i * 2 / m_boardItem.size()][1]],
                         255 * val[code[i * 2 / m_boardItem.size()][2]])));
         double samplingRate = 1300;
-        m_filters[0].push_back(new Highpass(5, samplingRate,8));
-        m_filters[1].push_back(new Bandstop(48, 52, samplingRate,40));
-        m_filters[2].push_back(new Bandpass(10, 200, samplingRate,20));
-        m_filters[3].push_back(new Rectifier(true));
-        m_filters[4].push_back(new Lowpass(20, samplingRate,20));
+        m_filters[0].push_back(new Highpass(5, samplingRate, 8));
+        m_filters[1].push_back(new Bandstop(48, 52, samplingRate, 40));
+        m_filters[2].push_back(new Bandpass(ui->spinBox_bandpass_low->value(),
+                                            ui->spinBox_bandpass_high->value(),
+                                            samplingRate, 20));
+        m_filters[3].push_back(new Rectifier(samplingRate, true));
+        m_filters[4].push_back(new Lowpass(20, samplingRate, 20));
     }
     QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
     timeTicker->setTimeFormat("%s");
@@ -430,14 +451,9 @@ MainWindow::upload()
     //m_plot->xAxis->setTicks(false);
     //m_plot->yAxis->setTicks(false);
 
-    m_plot->xAxis->setRange(0, 10);
+    m_plot->xAxis->setRange(0, m_plot_t_max);
     m_plot->yAxis->setRange(0, 1000);
 
-    //resize the vector of queue raw data
-    // m_raw_data.resize(3*m_boardItem.size());
-    // m_filtered_data.resize(3*m_boardItem.size());
-    // for(int i = 0; i<3*m_boardItem.size();i++)
-    //     m_filtered_data[i].resize(m_data_queue_size);
     m_plot->replot();
 
     m_plot->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -553,50 +569,40 @@ MainWindow::push_lsl()
 {
     try
     {
-        //usleep(1000);
         if(m_is_streaming)
         {
-            int n;
-
             //compute the sampling rate
             auto prev_time = m_time;
             m_time = clk::now();
             double fs = 1.0 / ((sec)(m_time - prev_time)).count();
             //printf("sampling rate: %f                \xd", fs);
-
             m_t = ((sec)(m_time - m_start_time)).count();
-            n = m_master.read_all_signal();
 
+            m_master.read_all_signal();
             for(int i = 0; i < m_boardItem.size(); i++)
             {
-                //m_master.get_error(i);
-
-                //std::cout <<  ui->horizontalSlider_var->value()<< std::endl;
-                //if(m_master.data_ready(i, -1))
-                //std::cout << m_master.get_error(i, true) << std::endl;	//       m_boardItem[i]->setText(1, QString::fromStdString(m_master.get_error(i)));
-                //else
-                //  m_boardItem[i]->setText(1, " ");
-                //printf("data ready %d\n", i);
-
+                // m_master.get_error(i);
+                // if(m_master.data_ready(i, -1))
+                //     m_boardItem[i]->setText(
+                //         1, QString::fromStdString(m_master.get_error(i)));
+                // else
+                //     m_boardItem[i]->setText(1, " ");
                 for(int j = 0; j < 3; j++)
                 {
-
                     if(m_master.data_ready(i, j, m_nb_bytes - 2))
                     {
                         double v = (m_nb_bytes == 2)
                                        ? m_master.fast_EMG(i, j)
                                        : m_master.precise_EMG(i, j);
-                        double v_filtered = 4*(sin(2 * M_PI * 50*m_t)+sin(2 * M_PI * 10*m_t)+sin(2 * M_PI * 100*m_t)) +4;
+                        double v_filtered =
+                            v; //10 * (sin(2 * M_PI * 50 * m_t) + sin(2 * M_PI * 10 * m_t) + sin(2 * M_PI * 100 * m_t)) +4;
                         if(m_filter_mode)
-                        {
                             for(int k = 0; k < m_filter_checkboxes.size(); k++)
-                            {
                                 if(m_filter_checkboxes[k]->isChecked())
-                                {
-                                    v_filtered = m_filters[k][3 * i + j]->apply(v_filtered, m_t);//TODO use timestamp
-                                }
-                            }
-                        }
+                                    v_filtered = m_filters[k][3 * i + j]->apply(
+                                        v_filtered, m_t);
+                        if(ui->checkBox_stream_filltered_value->isChecked())
+                            v = v_filtered;
                         m_lsl_sample[3 * i + j] = v;
                         m_plot->graph(i * 3 + j)->addData(
                             m_t,
@@ -787,8 +793,8 @@ MainWindow::data_ploting()
 {
     //filter the data in m_plot->graph(0)
     m_plot->replot();
-    if(m_t > 5)
-        m_plot->xAxis->setRange(m_t - 5, m_t);
+    if(m_t > m_plot_t_max)
+        m_plot->xAxis->setRange(m_t - m_plot_t_max, m_t);
     //    double key = QTime::currentTime().msec(); // time elapsed since start of demo, in seconds
     //    static double lastPointKey = 0;
     //    for(int i =0 ; i<m_plots.size();i++)

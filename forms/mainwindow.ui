@@ -1006,7 +1006,14 @@
            </widget>
           </item>
           <item>
-           <widget class="QSpinBox" name="spinBox_bandpass_low"/>
+           <widget class="QSpinBox" name="spinBox_bandpass_low">
+            <property name="maximum">
+             <number>200</number>
+            </property>
+            <property name="value">
+             <number>5</number>
+            </property>
+           </widget>
           </item>
           <item>
            <widget class="QLabel" name="label_16">
@@ -1022,7 +1029,14 @@
            </widget>
           </item>
           <item>
-           <widget class="QSpinBox" name="spinBox_bandpass_high"/>
+           <widget class="QSpinBox" name="spinBox_bandpass_high">
+            <property name="maximum">
+             <number>2000</number>
+            </property>
+            <property name="value">
+             <number>200</number>
+            </property>
+           </widget>
           </item>
           <item>
            <widget class="Line" name="line_12">
@@ -1049,6 +1063,20 @@
            <widget class="QCheckBox" name="checkBox_envelope">
             <property name="text">
              <string>Envelope</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="Line" name="line_10">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBox_stream_filltered_value">
+            <property name="text">
+             <string>Stream</string>
             </property>
            </widget>
           </item>

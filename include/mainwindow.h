@@ -96,6 +96,8 @@ class MainWindow : public QMainWindow
     void
     data_ploting();
 
+    void update_filter_param();
+
     private:
     Ui::MainWindow *ui;
     ClvHd::Master m_master;
@@ -109,7 +111,6 @@ class MainWindow : public QMainWindow
     pthread_t m_thread;
     lsl::stream_outlet *m_lsl_outlet;
     std::vector<float> m_lsl_sample;
-    std::vector<float> m_mean_sample;
     double m_t = 0;
 
     QHBoxLayout *m_debug_bar;
@@ -125,6 +126,7 @@ class MainWindow : public QMainWindow
     sec m_duration;
 
     QCustomPlot *m_plot;
+    int m_plot_t_max = 5;
     //queue of the raw data
     std::vector<std::queue<float>> m_raw_data;
     //size of the queue
@@ -135,6 +137,7 @@ class MainWindow : public QMainWindow
 
     //filters
     std::vector<std::vector<Filter*>> m_filters;
+    double m_sampling_rate = 1300;
     std::vector<QCheckBox*> m_filter_checkboxes;
 };
 #endif // MAINWINDOW_H
