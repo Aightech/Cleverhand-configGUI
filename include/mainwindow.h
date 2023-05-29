@@ -137,7 +137,8 @@ class MainWindow : public QMainWindow
 
     //filters
     std::vector<std::vector<Filter*>> m_filters;
-    double m_sampling_rate = 1300;
+    double m_sampling_rate = 2000;
+    double m_fs=1000;
     std::vector<QCheckBox*> m_filter_checkboxes;
 };
 #endif // MAINWINDOW_H

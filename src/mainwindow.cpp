@@ -7,6 +7,16 @@ MainWindow::MainWindow(QWidget *parent)
 {
     m_settings = new QSettings(".clvHd", "conf");
     ui->setupUi(this);
+    try
+    {
+        ui->pushButton_logo->setIcon(QIcon(QPixmap("../docs/logo.png")));
+        ui->pushButton_logo->setIconSize(ui->pushButton_logo->size());
+    }
+    catch(...)
+    {
+        qDebug() << "Error loading icon";
+    }
+
     ui->treeWidget_main->setColumnCount(2);
     ui->treeWidget_main->setHeaderLabels(QStringList()
                                          << tr("Boards") << tr("Settings"));
@@ -138,6 +148,12 @@ MainWindow::MainWindow(QWidget *parent)
     m_filter_checkboxes.push_back(ui->checkBox_envelope);
 
     filters();
+
+    ui->treeWidget_data->setColumnCount(3);
+    ui->treeWidget_data->setHeaderLabels(
+        QStringList() << tr("Id") << tr("Color") << tr("Value"));
+    ui->treeWidget_data->setColumnWidth(0, 50);
+    ui->treeWidget_data->setColumnWidth(1, 45);
 }
 
 MainWindow::~MainWindow()
@@ -150,6 +166,7 @@ MainWindow::~MainWindow()
 void
 MainWindow::connection()
 {
+    qDebug() << ui->pushButton_logo->size();
     ui->pushButton_connect->setDisabled(true);
     ui->lineEdit_pathdev->setDisabled(true);
     m_master.open_connection(Communication::Client::SERIAL,
@@ -195,6 +212,8 @@ MainWindow::connection()
     ui->spinBox_board_id->setMaximum(m_nb_board);
 
     this->update_indiv_param();
+
+    
 }
 
 void
@@ -229,6 +248,7 @@ MainWindow::update_filter_param()
     double high = ui->spinBox_bandpass_high->value();
     low = (low < 0) ? 1 : low;
     high = (high < low) ? low + 1 : high;
+    ui->lcdNumber_filteringFS->display(m_sampling_rate);
     for(int i = 0; i < m_filters[2].size(); i++)
         m_filters[2][i]->set_coefficients(
             Bandpass::butterworth_coefficients(20, low, high, m_sampling_rate));
@@ -418,18 +438,29 @@ MainWindow::upload()
     }
 
     m_plot = new QCustomPlot();
-    int code[6][3] = {{1, 2, 0}, {2, 1, 0}, {0, 1, 2},
-                      {0, 2, 1}, {2, 0, 1}, {1, 0, 2}};
     for(int i = 0; i < 3 * m_boardItem.size(); i++)
     {
         m_plot->addGraph();
-        double val[3] = {
-            0.25, 0.5,
-            0.25 * (2 - abs((int)(2 * i / m_boardItem.size()) % 2 - 1))};
+        QColor color = QColor::fromHsvF(
+            (double)i / (3 * m_boardItem.size()), 1, 0.75, 1);
         m_plot->graph(i)->setPen(
-            QPen(QColor(255 * val[code[i * 2 / m_boardItem.size()][0]],
-                        255 * val[code[i * 2 / m_boardItem.size()][1]],
-                        255 * val[code[i * 2 / m_boardItem.size()][2]])));
+            QPen(color)); // line color blue for first grap
+
+        //add a item to treeWidget_data, set the first column to the channel id, and the second column with a square of the same color as the graph
+        try
+        {
+            QTreeWidgetItem *item = new QTreeWidgetItem(ui->treeWidget_data);
+            item->setText(0, QString::number(i));
+            item->setText(1, "");
+            item->setBackground(
+                1, m_plot->graph(i)->pen().color());
+
+        }
+        catch(...)
+        {
+            qDebug() << "error";
+        }
+
         double samplingRate = 1300;
         m_filters[0].push_back(new Highpass(5, samplingRate, 8));
         m_filters[1].push_back(new Bandstop(48, 52, samplingRate, 40));
@@ -461,6 +492,34 @@ MainWindow::upload()
 
     this->resize(1500, m_plot->height());
     ui->verticalSlider_zoomPlot->setVisible(true);
+
+    m_plot->xAxis->setRange(0, 10);
+
+    for(int i = 0; i < m_plot->graphCount(); i++)
+        m_plot->graph(i)->data()->clear();
+
+    //set the signal data GUI info
+    ui->lcdNumber_nbChannels->display(m_nb_ch);
+    ui->lcdNumber_nbModules->display(m_nb_board);
+    ui->lcdNumber_samplingRate->display(1);
+    ui->lcdNumber_resolution->display(0.1);
+
+    //set style of the lcdNumber: segment black, background white
+    QPalette lcdpat = ui->lcdNumber_nbChannels->palette();
+    lcdpat.setColor(QPalette::Normal, QPalette::WindowText, Qt::black);
+    lcdpat.setColor(QPalette::Normal, QPalette::Window, Qt::white);
+    ui->lcdNumber_nbChannels->setPalette(lcdpat);
+    ui->lcdNumber_nbModules->setPalette(lcdpat);
+    ui->lcdNumber_samplingRate->setPalette(lcdpat);
+    ui->lcdNumber_resolution->setPalette(lcdpat);
+    ui->lcdNumber_filteringFS->setPalette(lcdpat);
+
+    ui->lcdNumber_nbChannels->setSegmentStyle(QLCDNumber::Flat);
+    ui->lcdNumber_nbModules->setSegmentStyle(QLCDNumber::Flat);
+    ui->lcdNumber_samplingRate->setSegmentStyle(QLCDNumber::Flat);
+    ui->lcdNumber_resolution->setSegmentStyle(QLCDNumber::Flat);
+    ui->lcdNumber_filteringFS->setSegmentStyle(QLCDNumber::Flat);
+
 }
 
 void
@@ -527,10 +586,6 @@ MainWindow::start_streaming()
         m_master.start_acquisition();
         m_start_time = clk::now();
         m_time = clk::now();
-        m_plot->xAxis->setRange(0, 10);
-
-        for(int i = 0; i < m_plot->graphCount(); i++)
-            m_plot->graph(i)->data()->clear();
 
         m_is_streaming = true;
 
@@ -575,6 +630,9 @@ MainWindow::push_lsl()
             auto prev_time = m_time;
             m_time = clk::now();
             double fs = 1.0 / ((sec)(m_time - prev_time)).count();
+            double alpha = 0.01;
+            m_fs = alpha * fs + (1 - alpha) * m_fs;
+            
             //printf("sampling rate: %f                \xd", fs);
             m_t = ((sec)(m_time - m_start_time)).count();
 
@@ -608,8 +666,11 @@ MainWindow::push_lsl()
                             m_t,
                             1000 / m_boardItem.size() / 3 *
                                 (i * 3 + j +
-                                 (0.5 + ui->verticalSlider_zoomPlot->value() *
-                                            v_filtered / 500)));
+                                 (0.5 -
+                                  ui->horizontalSlider_offsetPlot->value() /
+                                      100. +
+                                  ui->horizontalSlider_zoomPlot->value() *
+                                      v_filtered / 500)));
                     }
                 }
             }
@@ -792,6 +853,7 @@ void
 MainWindow::data_ploting()
 {
     //filter the data in m_plot->graph(0)
+    ui->lcdNumber_samplingRate->display(m_fs);
     m_plot->replot();
     if(m_t > m_plot_t_max)
         m_plot->xAxis->setRange(m_t - m_plot_t_max, m_t);
