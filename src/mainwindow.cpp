@@ -128,7 +128,9 @@ MainWindow::connection()
 {
     ui->pushButton_connect->setDisabled(true);
     ui->lineEdit_pathdev->setDisabled(true);
-    m_master.open_connection(Communication::Client::SERIAL,ui->lineEdit_pathdev->text().toStdString().c_str());//"192.168.127.253",5000);
+    m_master.open_connection(ui->lineEdit_pathdev->text().toStdString().c_str(), 500000, O_RDWR | O_NOCTTY);
+
+    //m_master.open_connection(Communication::Client::SERIAL,ui->lineEdit_pathdev->text().toStdString().c_str());//"192.168.127.253",5000);
                // ui->lineEdit_pathdev->text().toStdString().c_str());
 
     m_nb_board = m_master.setup();
@@ -307,6 +309,7 @@ MainWindow::upload()
                      .toInt()}; //R3_ch1 = 4 (0x01)
         m_master.setupEMG(i, route_table, chx_enable, chx_high_res,
                           chx_high_freq, R1, R2, R3);
+
         for(int j = 0; j < 3; j++)
         {
             m_settings->setValue("Board" + QString::number(i) + "/ADC" +
@@ -343,6 +346,7 @@ MainWindow::upload()
                         ui->treeWidget_main->itemWidget(m_boardItem[i]->child(4), 1))
                     ->currentIndex());
     }
+    
     ui->pushButton_startStream->setDisabled(false);
 
     if(m_plot != nullptr)
@@ -350,6 +354,7 @@ MainWindow::upload()
         ui->verticalLayout_graph->removeWidget(m_plot);
         delete m_plot;
     }
+    printf("1\n");
 
     m_plot = new QCustomPlot();
     int code[6][3]={{1,2,0},
@@ -364,6 +369,7 @@ MainWindow::upload()
         double val[3]={0.25, 0.5, 0.25*(2- abs((int)(2*i/m_boardItem.size())%2-1))};
         m_plot->graph(i)->setPen(QPen(QColor(255*val[code[i*2/m_boardItem.size()][0]], 255*val[code[i*2/m_boardItem.size()][1]], 255*val[code[i*2/m_boardItem.size()][2]])));
     }
+    printf("2\n");
     QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
     timeTicker->setTimeFormat("%s");
     m_plot->xAxis->setTicker(timeTicker);
@@ -381,12 +387,13 @@ MainWindow::upload()
 
     m_values.push_back(new std::vector<float>(1000));
     m_plot->replot();
-
+    printf("1\n");
 
     m_plot->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
     ui->verticalLayout_graph->addWidget(m_plot);
 
     this->resize(1500, m_plot->height());
+    printf("3\n");
 }
 
 void

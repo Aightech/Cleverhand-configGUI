@@ -108,7 +108,7 @@ private:
   std::chrono::time_point<std::chrono::system_clock> m_start_time;
   sec m_duration;
 
-  QCustomPlot* m_plot;
+  QCustomPlot* m_plot=nullptr;
   std::vector<std::vector<float>*> m_values;
 
   // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
